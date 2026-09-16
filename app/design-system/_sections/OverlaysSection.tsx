@@ -1,26 +1,42 @@
 'use client';
 
+import * as React from 'react';
 import {
+  Archive,
   ArrowRight,
+  ArrowUpDown,
   Building2,
   Calendar,
+  ChevronDown,
   Copy,
   CornerUpLeft,
   CreditCard,
-  Edit,
   FileText,
+  Filter,
   Home,
   Mail,
+  MoreHorizontal,
+  Pencil,
   Phone,
   Plus,
   Search,
   Settings,
+  Share2,
   Trash2,
   Users,
 } from 'lucide-react';
+import { toast } from 'sonner';
+
+import { Avatar } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Command,
+  CommandDialog,
+  CommandEmpty,
   CommandGroup,
+  CommandInput,
   CommandItem,
   CommandList,
   CommandSeparator,
@@ -34,8 +50,21 @@ import {
   ContextMenuShortcut,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
-import { Avatar } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+import { Kbd, KbdGroup } from '@/components/ui/kbd';
+import { Label } from '@/components/ui/label';
 import {
   Menubar,
   MenubarContent,
@@ -45,87 +74,83 @@ import {
   MenubarShortcut,
   MenubarTrigger,
 } from '@/components/ui/menubar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
-import { formatCurrency } from '@/lib/i18n/formatters';
-import { ShowcaseCombobox, type ComboboxOption } from '../_components/ShowcaseCombobox';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Section } from '../_components/Section';
 import { Subsection } from '../_components/Subsection';
 
-const SUBS: ComboboxOption[] = [
-  { value: 'pinturas-merida', label: 'Pinturas Mérida SA', hint: 'Pintura' },
-  { value: 'electricos-sureste', label: 'Eléctricos del Sureste', hint: 'Electricidad' },
-  { value: 'plomeria-yucatan', label: 'Plomería Yucatán', hint: 'Plomería' },
-  { value: 'herreria-itzimna', label: 'Herrería Itzimná', hint: 'Herrería' },
-  { value: 'jardines-mayab', label: 'Jardines del Mayab', hint: 'Jardinería' },
-  {
-    value: 'impermeabilizantes-pen',
-    label: 'Impermeabilizantes Península',
-    hint: 'Impermeabilización',
-  },
-  { value: 'aluminio-vidrio', label: 'Aluminio y Vidrio del Golfo', hint: 'Cancelería' },
-  { value: 'climas-merida', label: 'Climas Mérida', hint: 'Aire acondicionado' },
-];
-
+/**
+ * Overlays (01-sistema §5 nivel 4 y §7): menús, popovers, tooltips, hover
+ * cards y paleta de comandos. Todos flotan sobre la página con `shadow-lg` +
+ * borde, `bg-popover`, `rounded-md` y la entrada de tw-animate-css. Sin blur;
+ * foco con glow. El Sheet vive en «Modales y drawers» (M6).
+ */
 export function OverlaysSection() {
   return (
     <Section
       id="overlays"
       title="Overlays"
-      description="Capas flotantes: sheet lateral, hover card, command palette, combobox, context menu y menubar. Funcionales con Radix y cmdk."
+      description="Capas que flotan sobre la página: nivel 4 (shadow-lg + borde, bg-popover, rounded-md) con la entrada de tw-animate-css. Sin blur, sin gradientes; foco con glow azul. Los drawers viven en «Modales y drawers»."
     >
       <Subsection
-        id="sheet"
-        title="8.1 Sheet / Drawer"
-        caption="Panel lateral derecho de 400px. Header, cuerpo con datos y footer con acciones."
+        id="dropdown"
+        title="8.1 Dropdown menu"
+        caption="Menú ⋯ de una fila o ficha: acciones, separador y el destructivo al final. El segundo ejemplo muestra grupo de radio y casilla para ordenar y filtrar."
       >
-        <SheetDemo />
+        <DropdownDemo />
+      </Subsection>
+
+      <Subsection
+        id="context-menu"
+        title="8.2 Context menu"
+        caption="Clic derecho sobre la card. Mismas reglas que el dropdown: iconos en terciario, atajos a la derecha, destructivo separado."
+      >
+        <ContextMenuDemo />
+      </Subsection>
+
+      <Subsection
+        id="popover"
+        title="8.3 Popover de filtros"
+        caption="Popover nivel 4 con header, cuerpo de controles y pie en banda gris (Limpiar ghost + Aplicar negro). Los filtros aplicados viven en la URL."
+      >
+        <FilterPopoverDemo />
+      </Subsection>
+
+      <Subsection
+        id="tooltip"
+        title="8.4 Tooltip"
+        caption="Texto corto en bg-bg-overlay con flecha. Obligatorio en botones de solo icono; nunca sustituye al label de un control con texto."
+      >
+        <TooltipDemo />
       </Subsection>
 
       <Subsection
         id="hover-card"
-        title="8.2 Hover card"
-        caption="Tarjeta de identidad al pasar el cursor sobre un nombre. Aparece tras ~500ms."
+        title="8.5 Hover card"
+        caption="Tarjeta de identidad al pasar el cursor sobre un nombre (aparece tras ~500 ms). Avatar con fallback negro fijo y estado como Badge tone."
       >
         <HoverCardDemo />
       </Subsection>
 
       <Subsection
         id="command-palette"
-        title="8.3 Command palette"
-        caption="Paleta de comandos mostrada abierta inline. Búsqueda + grupos con atajos. Item destacado neutro (no emerald)."
+        title="8.6 Command palette"
+        caption="Paleta de comandos sobre cmdk. Arriba, la versión en diálogo (⌘K / Ctrl+K); abajo, la misma paleta mostrada abierta inline. Ítem resaltado neutro (bg-accent)."
       >
         <CommandPaletteDemo />
       </Subsection>
 
       <Subsection
-        id="combobox"
-        title="8.4 Combobox"
-        caption="Selector con búsqueda sobre cmdk. Check en la opción seleccionada."
-      >
-        <ComboboxDemo />
-      </Subsection>
-
-      <Subsection
-        id="context-menu"
-        title="8.5 Context menu"
-        caption="Click derecho sobre la card para abrir el menú contextual."
-      >
-        <ContextMenuDemo />
-      </Subsection>
-
-      <Subsection
         id="menubar"
-        title="8.6 Menubar"
-        caption="Barra de menús horizontal estilo aplicación de escritorio."
+        title="8.7 Menubar"
+        caption="Barra de menús horizontal estilo aplicación de escritorio. Se conserva como primitiva; en NAJA no hay topbar global."
       >
         <MenubarDemo />
       </Subsection>
@@ -135,64 +160,245 @@ export function OverlaysSection() {
 
 // 8.1 ------------------------------------------------------------------------
 
-function SheetDemo() {
+function DropdownDemo() {
+  const [sort, setSort] = React.useState('recent');
+  const [showClosed, setShowClosed] = React.useState(false);
+
   return (
-    <Sheet>
-      <SheetTrigger asChild>
-        <button
-          type="button"
-          className="inline-flex h-8 items-center gap-2 rounded-md border border-border-default bg-bg-elevated px-3 text-sm text-text-primary transition-colors hover:bg-bg-overlay"
-        >
-          <FileText className="size-4" strokeWidth={1.5} />
-          Ver detalle del pagaré
-        </button>
-      </SheetTrigger>
-      <SheetContent side="right" className="sm:max-w-[400px]">
-        <SheetHeader>
-          <SheetTitle>Pagaré #4 · Carla Mendoza</SheetTitle>
-          <SheetDescription>Casa Cardín · Depto 101</SheetDescription>
-        </SheetHeader>
-        <div className="space-y-4 px-4">
-          <dl className="space-y-3 text-sm">
-            {[
-              ['Monto', formatCurrency(12500)],
-              ['Fecha de cobro', '01/07/2026'],
-              ['Estado', 'Emitido'],
-              ['Ubicación física', 'Oficina NAJA'],
-              ['Secuencia', '4 de 12'],
-            ].map(([k, v]) => (
-              <div
-                key={k}
-                className="flex items-center justify-between border-b border-border-subtle pb-3"
-              >
-                <dt className="text-text-tertiary">{k}</dt>
-                <dd className="tabular-nums text-text-primary">{v}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-        <SheetFooter className="flex-row justify-end gap-2">
-          <SheetClose asChild>
-            <button
-              type="button"
-              className="h-8 rounded-md px-3 text-sm text-text-secondary hover:bg-bg-elevated hover:text-text-primary"
-            >
-              Cancelar
-            </button>
-          </SheetClose>
-          <button
-            type="button"
-            className="h-8 rounded-md bg-brand px-3 text-sm font-medium text-white hover:bg-brand-hover"
+    <div className="flex flex-wrap items-center gap-6">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon-sm" aria-label="Más acciones">
+            <MoreHorizontal strokeWidth={1.5} />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="w-52 shadow-lg">
+          <DropdownMenuItem>
+            <Pencil strokeWidth={1.5} />
+            Editar
+            <DropdownMenuShortcut>⌘E</DropdownMenuShortcut>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Copy strokeWidth={1.5} />
+            Duplicar
+            <DropdownMenuShortcut>⌘D</DropdownMenuShortcut>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Share2 strokeWidth={1.5} />
+            Compartir enlace
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem variant="destructive">
+            <Trash2 strokeWidth={1.5} />
+            Eliminar
+            <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" size="sm">
+            <ArrowUpDown strokeWidth={1.5} />
+            Ordenar por
+            <ChevronDown className="text-text-tertiary" strokeWidth={1.5} />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="w-52 shadow-lg">
+          <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
+            Ordenar por
+          </DropdownMenuLabel>
+          <DropdownMenuRadioGroup value={sort} onValueChange={setSort}>
+            <DropdownMenuRadioItem value="recent">Más recientes</DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="amount">Monto</DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="name">Nombre</DropdownMenuRadioItem>
+          </DropdownMenuRadioGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuCheckboxItem
+            checked={showClosed}
+            onCheckedChange={(checked) => setShowClosed(checked === true)}
           >
-            Aprobar cobro
-          </button>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
+            Mostrar cerradas
+          </DropdownMenuCheckboxItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 }
 
 // 8.2 ------------------------------------------------------------------------
+
+function ContextMenuDemo() {
+  return (
+    <ContextMenu>
+      <ContextMenuTrigger asChild>
+        <div className="flex max-w-md cursor-default flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-border-default bg-bg-surface px-6 py-10 text-center">
+          <p className="text-sm text-text-primary">Clic derecho para abrir el menú</p>
+          <p className="text-xs text-text-tertiary">
+            <span className="font-mono">COT-001</span> · Casa Montejo
+          </p>
+        </div>
+      </ContextMenuTrigger>
+      <ContextMenuContent className="w-48 shadow-lg">
+        <ContextMenuItem>
+          <Pencil strokeWidth={1.5} />
+          Editar
+          <ContextMenuShortcut>⌘E</ContextMenuShortcut>
+        </ContextMenuItem>
+        <ContextMenuItem>
+          <Copy strokeWidth={1.5} />
+          Duplicar
+          <ContextMenuShortcut>⌘D</ContextMenuShortcut>
+        </ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuItem variant="destructive">
+          <Trash2 strokeWidth={1.5} />
+          Eliminar
+          <ContextMenuShortcut>⌘⌫</ContextMenuShortcut>
+        </ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
+  );
+}
+
+// 8.3 ------------------------------------------------------------------------
+
+const STATE_OPTIONS = [
+  { value: 'abierta', label: 'Abierta' },
+  { value: 'en_curso', label: 'En curso' },
+  { value: 'cerrada', label: 'Cerrada' },
+] as const;
+
+type StateValue = (typeof STATE_OPTIONS)[number]['value'];
+
+const DEFAULT_STATES: Record<StateValue, boolean> = {
+  abierta: true,
+  en_curso: true,
+  cerrada: false,
+};
+
+function FilterPopoverDemo() {
+  const [open, setOpen] = React.useState(false);
+  const [states, setStates] = React.useState<Record<StateValue, boolean>>(DEFAULT_STATES);
+  const [owner, setOwner] = React.useState('');
+
+  const activeCount = Object.values(states).filter(Boolean).length + (owner ? 1 : 0);
+
+  function reset() {
+    setStates(DEFAULT_STATES);
+    setOwner('');
+  }
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button variant="outline" size="sm">
+          <Filter strokeWidth={1.5} />
+          Filtros
+          <span className="rounded-full bg-bg-elevated px-1.5 text-xs tabular-nums text-text-secondary">
+            {activeCount}
+          </span>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent align="start" className="w-72 p-0 shadow-lg">
+        <div className="border-b px-4 py-3">
+          <p className="text-sm font-semibold text-foreground">Filtros</p>
+          <p className="text-xs text-muted-foreground">Se aplican a la lista y viven en la URL.</p>
+        </div>
+        <div className="space-y-4 px-4 py-3">
+          <fieldset className="space-y-2">
+            <legend className="mb-2 text-xs text-muted-foreground">Estado</legend>
+            {STATE_OPTIONS.map((option) => {
+              const id = `filter-${option.value}`;
+              return (
+                <div key={option.value} className="flex items-center gap-2">
+                  <Checkbox
+                    id={id}
+                    checked={states[option.value]}
+                    onCheckedChange={(checked) =>
+                      setStates((prev) => ({ ...prev, [option.value]: checked === true }))
+                    }
+                  />
+                  <Label htmlFor={id} className="font-normal">
+                    {option.label}
+                  </Label>
+                </div>
+              );
+            })}
+          </fieldset>
+          <div className="space-y-1.5">
+            <Label htmlFor="filter-owner" className="text-xs font-normal text-muted-foreground">
+              Responsable
+            </Label>
+            <Select value={owner} onValueChange={setOwner}>
+              <SelectTrigger id="filter-owner" size="sm" className="w-full">
+                <SelectValue placeholder="Cualquiera" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="maria">María Pérez</SelectItem>
+                <SelectItem value="juan">Juan Hernández</SelectItem>
+                <SelectItem value="roberto">Roberto García</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <div className="flex items-center justify-between border-t bg-muted/30 px-4 py-2.5">
+          <Button variant="ghost" size="sm" onClick={reset}>
+            Limpiar
+          </Button>
+          <Button
+            size="sm"
+            onClick={() => {
+              setOpen(false);
+              toast.success('Filtros aplicados');
+            }}
+          >
+            Aplicar
+          </Button>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+// 8.4 ------------------------------------------------------------------------
+
+const ICON_ACTIONS = [
+  { icon: Pencil, label: 'Editar' },
+  { icon: Copy, label: 'Duplicar' },
+  { icon: Archive, label: 'Archivar' },
+];
+
+function TooltipDemo() {
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      {ICON_ACTIONS.map(({ icon: Icon, label }) => (
+        <Tooltip key={label}>
+          <TooltipTrigger asChild>
+            <Button variant="outline" size="icon-sm" aria-label={label}>
+              <Icon strokeWidth={1.5} />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent className="shadow-lg">{label}</TooltipContent>
+        </Tooltip>
+      ))}
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button variant="outline" size="sm">
+            <Search strokeWidth={1.5} />
+            Buscar
+            <Kbd>F</Kbd>
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" className="shadow-lg">
+          Enfoca el buscador con la tecla F
+        </TooltipContent>
+      </Tooltip>
+    </div>
+  );
+}
+
+// 8.5 ------------------------------------------------------------------------
 
 function HoverCardDemo() {
   return (
@@ -202,27 +408,27 @@ function HoverCardDemo() {
         <HoverCardTrigger asChild>
           <button
             type="button"
-            className="rounded-sm text-brand-text underline decoration-border-strong underline-offset-2 outline-none focus-visible:ring-2 focus-visible:ring-brand"
+            className="rounded-sm font-medium text-text-primary underline decoration-border-strong underline-offset-2 outline-none focus-visible:shadow-focus"
           >
             María Pérez
           </button>
         </HoverCardTrigger>
-        <HoverCardContent align="start" className="w-72">
+        <HoverCardContent align="start" className="w-72 shadow-lg">
           <div className="flex items-start gap-3">
-            <Avatar initials="MP" tone="brand" size={40} />
+            <Avatar name="María Pérez" size={40} />
             <div className="min-w-0">
-              <p className="text-sm text-text-primary">María Pérez</p>
+              <p className="text-sm font-medium text-text-primary">María Pérez</p>
               <p className="mt-0.5 flex items-center gap-1.5 text-xs text-text-secondary">
                 <Mail className="size-3" strokeWidth={1.5} />
                 maria.perez@example.mx
               </p>
-              <p className="mt-0.5 flex items-center gap-1.5 text-xs text-text-secondary">
+              <p className="mt-0.5 flex items-center gap-1.5 text-xs tabular-nums text-text-secondary">
                 <Phone className="size-3" strokeWidth={1.5} />
                 999 123 4567
               </p>
-              <span className="mt-2 inline-flex items-center rounded-sm bg-success-subtle px-2 py-0.5 text-xs text-success-text">
+              <Badge tone="success" className="mt-2">
                 Cliente activo
-              </span>
+              </Badge>
             </div>
           </div>
         </HoverCardContent>
@@ -232,171 +438,166 @@ function HoverCardDemo() {
   );
 }
 
-// 8.3 ------------------------------------------------------------------------
+// 8.6 ------------------------------------------------------------------------
+
+function PaletteItems({ onPick }: { onPick?: (label: string) => void }) {
+  const pick = (label: string) => () => {
+    onPick?.(label);
+    toast(label);
+  };
+  return (
+    <>
+      <CommandGroup heading="Acciones rápidas">
+        <CommandItem onSelect={pick('Nueva cotización')}>
+          <Plus strokeWidth={1.5} />
+          Nueva cotización
+          <CommandShortcut>⌘N</CommandShortcut>
+        </CommandItem>
+        <CommandItem onSelect={pick('Registrar cobro de renta')}>
+          <CreditCard strokeWidth={1.5} />
+          Registrar cobro de renta
+          <CommandShortcut>⌘R</CommandShortcut>
+        </CommandItem>
+      </CommandGroup>
+      <CommandSeparator />
+      <CommandGroup heading="Navegación">
+        <CommandItem onSelect={pick('Ir a proyectos')}>
+          <Building2 strokeWidth={1.5} />
+          Ir a proyectos
+        </CommandItem>
+        <CommandItem onSelect={pick('Ir a propiedades')}>
+          <Home strokeWidth={1.5} />
+          Ir a propiedades
+        </CommandItem>
+        <CommandItem onSelect={pick('Configuración')}>
+          <Settings strokeWidth={1.5} />
+          Configuración
+          <CommandShortcut>⌘,</CommandShortcut>
+        </CommandItem>
+      </CommandGroup>
+      <CommandSeparator />
+      <CommandGroup heading="Cotizaciones recientes">
+        <CommandItem onSelect={pick('COT-001 · Casa Montejo')}>
+          <FileText strokeWidth={1.5} />
+          <span className="font-mono text-xs">COT-001</span> · Casa Montejo
+        </CommandItem>
+        <CommandItem onSelect={pick('COT-007 · Casa Tulum')}>
+          <FileText strokeWidth={1.5} />
+          <span className="font-mono text-xs">COT-007</span> · Casa Tulum
+        </CommandItem>
+      </CommandGroup>
+    </>
+  );
+}
 
 function CommandPaletteDemo() {
+  const [open, setOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        setOpen((prev) => !prev);
+      }
+    }
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, []);
+
   return (
-    <div className="max-w-lg overflow-hidden rounded-xl border border-border-default bg-bg-elevated shadow-lg">
-      <Command className="bg-bg-elevated">
-        <div className="flex items-center gap-2 border-b border-border-subtle px-3">
-          <Search className="size-4 shrink-0 text-text-tertiary" strokeWidth={1.5} />
-          <input
-            readOnly
-            placeholder="Buscar acciones, proyectos, cotizaciones…"
-            className="h-11 flex-1 bg-transparent text-sm text-text-primary outline-none placeholder:text-text-disabled"
-          />
-        </div>
-        <CommandList className="max-h-none">
-          <CommandGroup heading="Acciones rápidas">
-            <CommandItem>
-              <Plus className="size-4" strokeWidth={1.5} />
-              Nueva cotización
-              <CommandShortcut>⌘N</CommandShortcut>
-            </CommandItem>
-            <CommandItem>
-              <CreditCard className="size-4" strokeWidth={1.5} />
-              Registrar cobro de renta
-              <CommandShortcut>⌘R</CommandShortcut>
-            </CommandItem>
-          </CommandGroup>
-          <CommandSeparator />
-          <CommandGroup heading="Navegación">
-            <CommandItem>
-              <Building2 className="size-4" strokeWidth={1.5} />
-              Ir a proyectos
-            </CommandItem>
-            <CommandItem>
-              <Home className="size-4" strokeWidth={1.5} />
-              Ir a propiedades
-            </CommandItem>
-            <CommandItem>
-              <Settings className="size-4" strokeWidth={1.5} />
-              Configuración
-              <CommandShortcut>⌘,</CommandShortcut>
-            </CommandItem>
-          </CommandGroup>
-          <CommandSeparator />
-          <CommandGroup heading="Cotizaciones recientes">
-            <CommandItem>
-              <FileText className="size-4" strokeWidth={1.5} />
-              COT-001 · Casa Montejo
-            </CommandItem>
-            <CommandItem>
-              <FileText className="size-4" strokeWidth={1.5} />
-              COT-007 · Casa Tulum
-            </CommandItem>
-          </CommandGroup>
+    <div className="space-y-4">
+      <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
+        <Search strokeWidth={1.5} />
+        Abrir paleta
+        <KbdGroup>
+          <Kbd>⌘</Kbd>
+          <Kbd>K</Kbd>
+        </KbdGroup>
+      </Button>
+
+      <CommandDialog
+        open={open}
+        onOpenChange={setOpen}
+        title="Paleta de comandos"
+        description="Busca una acción o navega a un módulo"
+        showCloseButton={false}
+      >
+        <CommandInput placeholder="Buscar acciones, proyectos, cotizaciones…" />
+        <CommandList>
+          <CommandEmpty>Sin resultados.</CommandEmpty>
+          <PaletteItems onPick={() => setOpen(false)} />
         </CommandList>
-      </Command>
+      </CommandDialog>
+
+      <div className="max-w-lg overflow-hidden rounded-lg border bg-popover shadow-lg">
+        <Command>
+          <CommandInput placeholder="Buscar acciones, proyectos, cotizaciones…" />
+          <CommandList className="max-h-none">
+            <CommandEmpty>Sin resultados.</CommandEmpty>
+            <PaletteItems />
+          </CommandList>
+        </Command>
+      </div>
     </div>
   );
 }
 
-// 8.4 ------------------------------------------------------------------------
-
-function ComboboxDemo() {
-  return (
-    <div className="max-w-sm">
-      <p className="mb-2 text-sm text-text-secondary">Asignar subcontratista</p>
-      <ShowcaseCombobox
-        options={SUBS}
-        placeholder="Selecciona un subcontratista"
-        searchPlaceholder="Buscar por nombre…"
-        emptyText="Sin subcontratistas."
-      />
-    </div>
-  );
-}
-
-// 8.5 ------------------------------------------------------------------------
-
-function ContextMenuDemo() {
-  return (
-    <ContextMenu>
-      <ContextMenuTrigger asChild>
-        <div className="flex max-w-md cursor-default flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-border-default bg-bg-surface px-6 py-10 text-center">
-          <p className="text-sm text-text-primary">Right-click para abrir menú</p>
-          <p className="text-xs text-text-tertiary">Cotización COT-001 · Casa Montejo</p>
-        </div>
-      </ContextMenuTrigger>
-      <ContextMenuContent className="w-48">
-        <ContextMenuItem>
-          <Edit className="size-4" strokeWidth={1.5} />
-          Editar
-          <ContextMenuShortcut>⌘E</ContextMenuShortcut>
-        </ContextMenuItem>
-        <ContextMenuItem>
-          <Copy className="size-4" strokeWidth={1.5} />
-          Duplicar
-          <ContextMenuShortcut>⌘D</ContextMenuShortcut>
-        </ContextMenuItem>
-        <ContextMenuSeparator />
-        <ContextMenuItem variant="destructive">
-          <Trash2 className="size-4" strokeWidth={1.5} />
-          Eliminar
-          <ContextMenuShortcut>⌘⌫</ContextMenuShortcut>
-        </ContextMenuItem>
-      </ContextMenuContent>
-    </ContextMenu>
-  );
-}
-
-// 8.6 ------------------------------------------------------------------------
+// 8.7 ------------------------------------------------------------------------
 
 function MenubarDemo() {
   return (
     <Menubar>
       <MenubarMenu>
         <MenubarTrigger>Archivo</MenubarTrigger>
-        <MenubarContent>
+        <MenubarContent className="shadow-lg">
           <MenubarItem>
-            <Plus className="size-4" strokeWidth={1.5} />
+            <Plus strokeWidth={1.5} />
             Nuevo proyecto
             <MenubarShortcut>⌘N</MenubarShortcut>
           </MenubarItem>
           <MenubarItem>
-            <FileText className="size-4" strokeWidth={1.5} />
+            <FileText strokeWidth={1.5} />
             Nueva cotización
           </MenubarItem>
           <MenubarSeparator />
           <MenubarItem>
-            <ArrowRight className="size-4" strokeWidth={1.5} />
+            <ArrowRight strokeWidth={1.5} />
             Exportar PDF
           </MenubarItem>
         </MenubarContent>
       </MenubarMenu>
       <MenubarMenu>
         <MenubarTrigger>Editar</MenubarTrigger>
-        <MenubarContent>
+        <MenubarContent className="shadow-lg">
           <MenubarItem>
-            <CornerUpLeft className="size-4" strokeWidth={1.5} />
+            <CornerUpLeft strokeWidth={1.5} />
             Deshacer
             <MenubarShortcut>⌘Z</MenubarShortcut>
           </MenubarItem>
           <MenubarItem>
-            <Copy className="size-4" strokeWidth={1.5} />
+            <Copy strokeWidth={1.5} />
             Duplicar
           </MenubarItem>
           <MenubarSeparator />
           <MenubarItem variant="destructive">
-            <Trash2 className="size-4" strokeWidth={1.5} />
+            <Trash2 strokeWidth={1.5} />
             Eliminar
           </MenubarItem>
         </MenubarContent>
       </MenubarMenu>
       <MenubarMenu>
         <MenubarTrigger>Ver</MenubarTrigger>
-        <MenubarContent>
+        <MenubarContent className="shadow-lg">
           <MenubarItem>
-            <Users className="size-4" strokeWidth={1.5} />
+            <Users strokeWidth={1.5} />
             Mostrar autor
           </MenubarItem>
           <MenubarItem>
-            <Calendar className="size-4" strokeWidth={1.5} />
+            <Calendar strokeWidth={1.5} />
             Vista calendario
           </MenubarItem>
           <MenubarItem>
-            <Building2 className="size-4" strokeWidth={1.5} />
+            <Building2 strokeWidth={1.5} />
             Agrupar por propiedad
           </MenubarItem>
         </MenubarContent>

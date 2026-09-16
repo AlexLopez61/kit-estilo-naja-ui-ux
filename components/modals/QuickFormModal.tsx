@@ -58,6 +58,8 @@ export function QuickFormModal({
       title={title}
       description={description}
       size="sm"
+      headerAlign="center"
+      footerMuted
       footer={
         <>
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
@@ -118,7 +120,7 @@ function FormBody({
         <div key={field.name} className="space-y-1">
           <Label htmlFor={`quick-${field.name}`} className="text-muted-foreground">
             {field.label}
-            {field.required !== false && <span className="ml-0.5 text-primary">*</span>}
+            {field.required !== false && <span className="ml-0.5 text-brand-text">*</span>}
           </Label>
           <Input
             id={`quick-${field.name}`}
@@ -126,7 +128,7 @@ function FormBody({
             placeholder={field.placeholder}
             autoFocus={i === 0}
             aria-invalid={Boolean(errors[field.name])}
-            className="bg-card"
+            className="bg-bg-base"
           />
           {errors[field.name] && (
             <p className="text-xs text-destructive" role="alert">

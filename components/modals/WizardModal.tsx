@@ -81,6 +81,8 @@ export function WizardModal({
       title={title}
       dismissable={false}
       size={size}
+      headerAlign="center"
+      footerMuted
       headerAddon={<Stepper steps={steps} current={step} />}
       footer={
         <>

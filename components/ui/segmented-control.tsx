@@ -71,7 +71,7 @@ export function SegmentedControl<T extends string>({
   value: T | null;
   onChange: (value: T) => void;
   className?: string;
-  /** `tint` (default) para superficies bg-background; `switch` sobre cards. */
+  /** `switch` (default) para selectores de vista; `tint` solo dentro de formularios. */
   variant?: 'tint' | 'switch';
   'aria-label'?: string;
 }) {

@@ -87,7 +87,7 @@ export function AddOnTile({
       type="button"
       onClick={onClick}
       className={[
-        'border-border-default text-text-secondary hover:text-text-primary hover:bg-bg-elevated flex min-h-14 w-full items-center justify-center gap-2 rounded-lg border border-dashed px-4 text-base transition-colors',
+        'border-border-default text-text-secondary hover:text-text-primary hover:bg-bg-elevated flex min-h-14 w-full items-center justify-center gap-2 rounded-lg border border-dashed px-4 text-base transition-colors outline-none focus-visible:border-ring/50 focus-visible:shadow-focus',
         className ?? '',
       ].join(' ')}
     >

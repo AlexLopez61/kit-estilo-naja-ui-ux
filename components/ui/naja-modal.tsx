@@ -215,7 +215,7 @@ export function NajaModal({
                     </span>
                   )}
               <div className="min-w-0 flex-1">
-                <DialogTitle className="text-base font-medium text-foreground">{title}</DialogTitle>
+                <DialogTitle className="text-base font-semibold text-foreground">{title}</DialogTitle>
                 {description && (
                   <DialogDescription className="mt-1 text-muted-foreground">
                     {description}

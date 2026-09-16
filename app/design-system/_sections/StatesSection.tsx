@@ -1,149 +1,123 @@
+'use client';
+
+import * as React from 'react';
 import {
   AlertTriangle,
-  CheckCircle2,
-  Info,
+  FileText,
+  MessageSquareText,
+  MoreHorizontal,
+  Pencil,
+  Plus,
+  Receipt,
   RefreshCw,
-  X,
-  XCircle,
+  User,
   type LucideIcon,
 } from 'lucide-react';
-import { ReactNode } from 'react';
+import { toast } from 'sonner';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { NajaModal } from '@/components/ui/naja-modal';
+import { Progress } from '@/components/ui/progress';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Spinner } from '@/components/ui/spinner';
+import { Textarea } from '@/components/ui/textarea';
+import { EmptyState } from '@/components/patterns/EmptyState';
+import { ActionErrorAlert, type ActionAlertState } from '@/components/shared/ActionErrorAlert';
+import { DETAIL_CARD_CLASS, IconCircle } from '@/components/shared/DetailCard';
+import { ProgressRing } from '@/components/shared/ProgressRing';
+import { RatingRing, RatingValue } from '@/components/shared/RatingRing';
+import { StarRating } from '@/components/shared/StarRating';
+import { Field, StepCard } from '@/components/shared/StepCard';
+import { CONCURRENCY_CONFLICT_MESSAGE } from '@/lib/concurrency';
+import { formatCurrency, formatDate } from '@/lib/i18n/formatters';
+import { cn } from '@/lib/utils';
 import { Section } from '../_components/Section';
 import { Subsection } from '../_components/Subsection';
 
-type Tone = 'success' | 'warning' | 'danger' | 'info';
-
-const TONE_META: Record<
-  Tone,
-  { icon: LucideIcon; pill: string; text: string; subtle: string; solid: string }
-> = {
-  success: {
-    icon: CheckCircle2,
-    pill: 'bg-success-subtle text-success-text',
-    text: 'text-success-text',
-    subtle: 'bg-success-subtle',
-    solid: 'bg-success',
-  },
-  warning: {
-    icon: AlertTriangle,
-    pill: 'bg-warning-subtle text-warning-text',
-    text: 'text-warning-text',
-    subtle: 'bg-warning-subtle',
-    solid: 'bg-warning',
-  },
-  danger: {
-    icon: XCircle,
-    pill: 'bg-danger-subtle text-danger-text',
-    text: 'text-danger-text',
-    subtle: 'bg-danger-subtle',
-    solid: 'bg-danger',
-  },
-  info: {
-    icon: Info,
-    pill: 'bg-info-subtle text-info-text',
-    text: 'text-info-text',
-    subtle: 'bg-info-subtle',
-    solid: 'bg-info',
-  },
-};
-
+/**
+ * Estados (02-moldes M11 y 01-sistema §6.4): vacío con `EmptyState`, carga
+ * con `Skeleton` (nunca spinner en listas), spinner solo dentro de un botón,
+ * toasts reales de sonner, `ActionErrorAlert` bajo el formulario (genérico y
+ * conflicto de concurrencia), progreso y calificación, y el patrón de
+ * permisos: alternativa visible en vez de botón deshabilitado.
+ */
 export function StatesSection() {
   return (
     <Section
       id="states"
-      title="States"
-      description="Estados transitorios que la app muestra todo el tiempo: cargando, error, notificaciones y progreso. Los toasts son mocks visuales para validar el look — la app real usa sonner."
+      title="Estados"
+      description="Vacío, cargando, error y progreso tal como los muestra la app: EmptyState dentro de la card, Skeleton con la silueta real (nunca spinner en listas), spinner solo en el botón que ejecuta, toasts de sonner, ActionErrorAlert bajo el formulario y, en permisos, una alternativa visible en lugar de un botón deshabilitado."
     >
       <Subsection
-        title="5.1 Loading states"
-        caption="Skeletons con bg-bg-elevated animado (animate-pulse). Replican la silueta del contenido real para evitar saltos de layout. Skeleton sobre spinner para listas y cards."
+        id="estado-vacio"
+        title="5.1 Vacío (EmptyState)"
+        caption="min-h-[400px], icono en círculo, título, descripción y una sola acción. Dentro de una card de lista (M1) ocupa el cuerpo de la card. variant=error pinta el círculo en destructive/10 y ofrece Reintentar."
       >
-        <div className="grid max-w-5xl grid-cols-1 gap-5 md:grid-cols-2">
-          <LabeledBlock label="Card">
-            <SkeletonCard />
-          </LabeledBlock>
-          <LabeledBlock label="KPI card">
-            <SkeletonKpi />
-          </LabeledBlock>
-          <LabeledBlock label="Lista · 5 rows">
-            <SkeletonList />
-          </LabeledBlock>
-          <LabeledBlock label="Tabla">
-            <SkeletonTable />
-          </LabeledBlock>
-        </div>
+        <EmptyStateDemo />
       </Subsection>
 
       <Subsection
-        title="5.2 Estados de error"
-        caption="Tres niveles de gravedad: error inline contenido en una card con acción de reintento, banner full-width para fallos de página, y toast compacto para fallos de acción puntual."
+        id="loading-states"
+        title="5.2 Cargando (Skeleton)"
+        caption="Skeleton en bg-bg-elevated con animate-pulse y la silueta exacta del contenido para que no salte el layout: lista de M1 y panel de ficha (M3). Un panel que solo cambia de filtro conserva el contenido anterior; el skeleton aparece solo con key nueva."
       >
-        <div className="max-w-5xl space-y-5">
-          <ErrorBanner />
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-            <ErrorInlineCard />
-            <div className="flex items-start">
-              <ErrorToast />
-            </div>
-          </div>
-        </div>
+        <SkeletonDemo />
       </Subsection>
 
       <Subsection
-        title="5.3 Notificaciones · toasts"
-        caption="Cuatro variantes por tono semántico. Container bg-bg-overlay con shadow-lg (flotan sobre el contenido). Ícono en color del tono, título, descripción opcional y cierre. Mock visual, no sonner real."
+        id="spinner"
+        title="5.3 Spinner solo en botón"
+        caption="El spinner vive dentro del botón que ejecuta la acción, con el label en gerundio, mientras dura la espera. Nunca como estado de carga de una lista o un panel."
       >
-        <div className="grid max-w-3xl grid-cols-1 gap-3 sm:grid-cols-2">
-          <Toast
-            tone="success"
-            title="Cobro registrado"
-            description="Se registró el cobro de PAG-2026-041 por $12,500.00."
-          />
-          <Toast
-            tone="warning"
-            title="Pagaré próximo a pagar"
-            description="PAG-2026-041 se cobra en 4 días."
-          />
-          <Toast
-            tone="danger"
-            title="No se pudo guardar"
-            description="Revisa tu conexión e intenta de nuevo."
-          />
-          <Toast tone="info" title="Cotización enviada" description="Se notificó a María Pérez." />
-        </div>
+        <SpinnerButtonDemo />
       </Subsection>
 
       <Subsection
-        title="5.4 Progress indicators"
-        caption="Barras lineales (track bg-bg-elevated, fill bg-brand) en dos grosores, y anillos circulares en dos tamaños. Para acciones determinadas con avance medible; el spinner queda para esperas indeterminadas puntuales."
+        id="toasts"
+        title="5.4 Toasts (sonner)"
+        caption="Toasts reales: siguen resolvedTheme, mensajes en español, abajo a la derecha. Para confirmar acciones que terminaron y para errores fuera de un formulario; con acción cuando hay deshacer."
       >
-        <div className="max-w-5xl space-y-8">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <LabeledBlock label="Barra delgada · 4px">
-              <ProgressBar value={35} thin />
-            </LabeledBlock>
-            <LabeledBlock label="Barra normal · 6px">
-              <ProgressBar value={72} />
-            </LabeledBlock>
-          </div>
-          <LabeledBlock label="Anillos · 24px y 40px">
-            <div className="flex items-center gap-8">
-              <ProgressRing value={35} size={24} />
-              <ProgressRing value={72} size={40} />
-              <ProgressRing value={100} size={40} tone="success" />
-            </div>
-          </LabeledBlock>
-        </div>
+        <ToastDemo />
+      </Subsection>
+
+      <Subsection
+        id="action-error-alert"
+        title="5.5 Error de acción y concurrencia (ActionErrorAlert)"
+        caption="Bajo el formulario, con la causa en español. El conflicto de concurrencia (VersionField con updated_at) se distingue en ámbar con «Recargar» (recarga esta página). Los errores de campo se muestran junto a cada campo, no aquí."
+      >
+        <ActionErrorDemo />
+      </Subsection>
+
+      <Subsection
+        id="progress"
+        title="5.6 Progreso y calificación"
+        caption="Progress h-1.5 (neutro por defecto; tono semántico solo cuando el avance es un estado), ProgressRing con el número dentro, RatingRing / RatingValue de cinco segmentos y StarRating de solo lectura."
+      >
+        <ProgressDemo />
+      </Subsection>
+
+      <Subsection
+        id="permisos"
+        title="5.7 Permisos: alternativa, no deshabilitado"
+        caption="Lo que un rol no puede hacer no se renderiza. Si existe alternativa se muestra en su lugar: el coordinador no edita registros financieros, así que ve «Solicitar corrección» (modal M8 con el registro en filas-card y un textarea). Nunca un botón deshabilitado sin alternativa."
+      >
+        <PermissionsDemo />
       </Subsection>
     </Section>
   );
 }
 
-// =============================================================================
+// ---------------------------------------------------------------------------
 // Helpers
-// =============================================================================
+// ---------------------------------------------------------------------------
 
-function LabeledBlock({ label, children }: { label: string; children: ReactNode }) {
+function delay(ms: number) {
+  return new Promise<void>((resolve) => window.setTimeout(resolve, ms));
+}
+
+function LabeledBlock({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="space-y-2">
       <p className="text-xs text-text-tertiary">{label}</p>
@@ -152,260 +126,468 @@ function LabeledBlock({ label, children }: { label: string; children: ReactNode 
   );
 }
 
-function StateCard({ children, className = '' }: { children: ReactNode; className?: string }) {
+/** Skeleton con la superficie del sistema (bg-bg-elevated). */
+function Bone({ className }: { className?: string }) {
+  return <Skeleton className={cn('bg-bg-elevated', className)} />;
+}
+
+// 5.1 ------------------------------------------------------------------------
+
+function EmptyStateDemo() {
   return (
-    <div className={`rounded-lg border border-border-subtle bg-bg-surface p-5 ${className}`.trim()}>
-      {children}
+    <div className="grid gap-5 lg:grid-cols-2">
+      <div className={DETAIL_CARD_CLASS}>
+        <EmptyState
+          icon={<FileText strokeWidth={1.5} />}
+          title="Aún no hay cotizaciones"
+          description="Crea la primera para empezar a dar seguimiento al pipeline."
+          action={
+            <Button>
+              <Plus strokeWidth={1.5} />
+              Nueva cotización
+            </Button>
+          }
+        />
+      </div>
+      <div className={DETAIL_CARD_CLASS}>
+        <EmptyState
+          variant="error"
+          icon={<AlertTriangle strokeWidth={1.5} />}
+          title="No se pudieron cargar los cobros"
+          description="Ocurrió un error al consultar la información. Verifica tu conexión e inténtalo de nuevo."
+          action={
+            <Button variant="outline" onClick={() => toast('Reintentando…')}>
+              <RefreshCw strokeWidth={1.5} />
+              Reintentar
+            </Button>
+          }
+        />
+      </div>
     </div>
   );
 }
 
-function Bar({ className = '' }: { className?: string }) {
-  return <div className={`animate-pulse rounded-sm bg-bg-elevated ${className}`.trim()} />;
+// 5.2 ------------------------------------------------------------------------
+
+function ListSkeleton() {
+  return (
+    <div className={cn(DETAIL_CARD_CLASS, 'overflow-hidden')}>
+      <div className="flex h-9 items-center gap-3 border-b border-border-subtle px-4">
+        <Bone className="h-2 w-24" />
+        <Bone className="h-2 w-16" />
+        <Bone className="ml-auto h-2 w-12" />
+      </div>
+      {Array.from({ length: 5 }, (_, i) => (
+        <div
+          key={i}
+          className="flex min-h-16 items-center gap-3 border-b border-border-subtle px-4 last:border-0"
+        >
+          <Bone className="size-8 rounded-full" />
+          <div className="flex-1 space-y-1.5">
+            <Bone className="h-3 w-1/3" />
+            <Bone className="h-2.5 w-1/2" />
+          </div>
+          <Bone className="h-3 w-16" />
+        </div>
+      ))}
+    </div>
+  );
 }
 
-// =============================================================================
-// 5.1 Loading states
-// =============================================================================
-
-function SkeletonCard() {
+/** Silueta del panel de ficha (M3): hero plano sobre el gris, tile con sombra, rejilla y sub-card. */
+function PanelSkeleton() {
   return (
-    <StateCard>
-      <div className="flex items-center gap-3">
-        <Bar className="size-9 rounded-full" />
-        <div className="flex-1 space-y-2">
-          <Bar className="h-3 w-2/5" />
-          <Bar className="h-2.5 w-3/5" />
+    <div className="rounded-lg bg-bg-elevated p-4 shadow-md dark:border dark:border-border-card">
+      <div className="rounded-lg bg-bg-surface p-4 dark:border dark:border-border-card">
+        <div className="flex items-center gap-3">
+          <Bone className="size-8 rounded-full" />
+          <div className="flex-1 space-y-1.5">
+            <Bone className="h-3 w-2/5" />
+            <Bone className="h-2.5 w-1/4" />
+          </div>
+          <Bone className="h-5 w-16 rounded-sm" />
+        </div>
+        <div className="mt-4 rounded-lg bg-bg-surface p-4 shadow-md dark:border dark:border-border-card">
+          <Bone className="h-2.5 w-20" />
+          <Bone className="mt-2 h-7 w-32" />
+        </div>
+        <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3">
+          {Array.from({ length: 4 }, (_, i) => (
+            <div key={i} className="space-y-1.5">
+              <Bone className="h-2 w-1/2" />
+              <Bone className="h-3 w-3/4" />
+            </div>
+          ))}
         </div>
       </div>
-      <div className="mt-5 space-y-2.5">
-        <Bar className="h-2.5 w-full" />
-        <Bar className="h-2.5 w-11/12" />
-        <Bar className="h-2.5 w-3/4" />
+      <div className="mt-4 rounded-lg bg-bg-surface p-4 dark:border dark:border-border-card">
+        <Bone className="h-3 w-24" />
+        <Bone className="mt-3 h-2.5 w-full" />
+        <Bone className="mt-2 h-2.5 w-5/6" />
       </div>
-      <div className="mt-5 flex gap-2">
-        <Bar className="h-8 w-24 rounded-md" />
-        <Bar className="h-8 w-20 rounded-md" />
-      </div>
-    </StateCard>
-  );
-}
-
-function SkeletonKpi() {
-  return (
-    <StateCard>
-      <div className="flex items-center justify-between">
-        <Bar className="h-2.5 w-28" />
-        <Bar className="h-7 w-24 rounded-md" />
-      </div>
-      <Bar className="mt-4 h-8 w-40" />
-      <Bar className="mt-2 h-2.5 w-32" />
-    </StateCard>
-  );
-}
-
-function SkeletonList() {
-  return (
-    <StateCard className="p-0">
-      <ul className="divide-y divide-border-subtle">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <li key={i} className="flex items-center gap-3 px-4 py-3">
-            <Bar className="size-7 rounded-full" />
-            <div className="flex-1 space-y-1.5">
-              <Bar className="h-2.5 w-1/3" />
-              <Bar className="h-2 w-1/2" />
-            </div>
-            <Bar className="h-2.5 w-16" />
-          </li>
-        ))}
-      </ul>
-    </StateCard>
-  );
-}
-
-function SkeletonTable() {
-  return (
-    <StateCard className="p-0">
-      <div className="flex items-center gap-3 border-b border-border-subtle px-4 py-2.5">
-        <Bar className="h-2 w-20" />
-        <Bar className="h-2 w-24" />
-        <Bar className="ml-auto h-2 w-12" />
-      </div>
-      <div className="divide-y divide-border-subtle">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="flex items-center gap-3 px-4 py-3">
-            <Bar className="h-2.5 w-24" />
-            <Bar className="h-2.5 w-32" />
-            <Bar className="ml-auto h-2.5 w-14" />
-          </div>
-        ))}
-      </div>
-    </StateCard>
-  );
-}
-
-// =============================================================================
-// 5.2 Estados de error
-// =============================================================================
-
-function RetryButton({ subtle = false }: { subtle?: boolean }) {
-  return (
-    <button
-      type="button"
-      className={
-        subtle
-          ? 'inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-sm text-text-secondary hover:bg-bg-elevated hover:text-text-primary'
-          : 'inline-flex h-8 items-center gap-1.5 rounded-md border border-border-default bg-bg-elevated px-3 text-sm text-text-primary hover:bg-bg-overlay'
-      }
-    >
-      <RefreshCw className="size-3.5" strokeWidth={1.5} />
-      Reintentar
-    </button>
-  );
-}
-
-function ErrorInlineCard() {
-  return (
-    <StateCard className="flex flex-col items-center py-10 text-center">
-      <span className="flex size-12 items-center justify-center rounded-full bg-danger-subtle">
-        <XCircle className="size-6 text-danger-text" strokeWidth={1.5} />
-      </span>
-      <h4 className="mt-4 text-base text-text-primary">No se pudieron cargar los cobros</h4>
-      <p className="mt-1 max-w-xs text-sm text-text-secondary">
-        Ocurrió un error al consultar la información. Verifica tu conexión e inténtalo otra vez.
-      </p>
-      <div className="mt-5">
-        <RetryButton />
-      </div>
-    </StateCard>
-  );
-}
-
-function ErrorBanner() {
-  return (
-    <div className="flex items-start gap-3 rounded-lg border border-danger-subtle bg-danger-subtle px-4 py-3">
-      <AlertTriangle className="mt-0.5 size-4 shrink-0 text-danger-text" strokeWidth={1.75} />
-      <div className="min-w-0 flex-1">
-        <p className="text-sm text-text-primary">No se pudo conectar con el servidor</p>
-        <p className="mt-0.5 text-xs text-text-secondary">
-          Algunos datos pueden estar desactualizados. Se reintentará automáticamente en segundo
-          plano.
-        </p>
-      </div>
-      <RetryButton subtle />
     </div>
   );
 }
 
-function ErrorToast() {
+function SkeletonDemo() {
   return (
-    <div className="flex w-full max-w-sm items-start gap-3 rounded-md border border-border-default bg-bg-overlay p-3 shadow-lg">
-      <XCircle className="mt-0.5 size-4 shrink-0 text-danger-text" strokeWidth={1.75} />
-      <div className="min-w-0 flex-1">
-        <p className="text-sm text-text-primary">No se pudo guardar el gasto</p>
-        <p className="mt-0.5 text-xs text-text-secondary">Falta la asignación a un proyecto.</p>
-      </div>
-      <button
-        type="button"
-        className="-m-1 shrink-0 rounded-sm p-1 text-text-tertiary hover:text-text-primary"
-        aria-label="Cerrar"
+    <div className="grid max-w-5xl gap-5 lg:grid-cols-[1fr_380px]">
+      <LabeledBlock label="Lista (M1)">
+        <ListSkeleton />
+      </LabeledBlock>
+      <LabeledBlock label="Panel de ficha (M3)">
+        <PanelSkeleton />
+      </LabeledBlock>
+    </div>
+  );
+}
+
+// 5.3 ------------------------------------------------------------------------
+
+function SpinnerButtonDemo() {
+  const [pending, setPending] = React.useState(false);
+
+  async function save() {
+    setPending(true);
+    await delay(1500);
+    setPending(false);
+    toast.success('Cambios guardados');
+  }
+
+  return (
+    <div className="flex flex-wrap items-center gap-3">
+      <Button onClick={save} disabled={pending}>
+        {pending ? (
+          <>
+            <Spinner />
+            Guardando…
+          </>
+        ) : (
+          'Guardar cambios'
+        )}
+      </Button>
+      <Button variant="outline" disabled={pending}>
+        Cancelar
+      </Button>
+    </div>
+  );
+}
+
+// 5.4 ------------------------------------------------------------------------
+
+function ToastDemo() {
+  return (
+    <div className="flex flex-wrap gap-2">
+      <Button
+        variant="outline"
+        onClick={() =>
+          toast.success('Cobro registrado', {
+            description: `PAG-2026-041 · ${formatCurrency(12500)}`,
+          })
+        }
       >
-        <X className="size-3.5" strokeWidth={1.75} />
-      </button>
-    </div>
-  );
-}
-
-// =============================================================================
-// 5.3 Toasts
-// =============================================================================
-
-function Toast({ tone, title, description }: { tone: Tone; title: string; description?: string }) {
-  const meta = TONE_META[tone];
-  const Icon = meta.icon;
-  return (
-    <div className="flex items-start gap-3 rounded-md border border-border-default bg-bg-overlay p-3 shadow-lg">
-      <Icon className={`mt-0.5 size-4 shrink-0 ${meta.text}`} strokeWidth={1.75} />
-      <div className="min-w-0 flex-1">
-        <p className="text-sm text-text-primary">{title}</p>
-        {description && <p className="mt-0.5 text-xs text-text-secondary">{description}</p>}
-      </div>
-      <button
-        type="button"
-        className="-m-1 shrink-0 rounded-sm p-1 text-text-tertiary hover:text-text-primary"
-        aria-label="Cerrar"
+        Éxito
+      </Button>
+      <Button
+        variant="outline"
+        onClick={() =>
+          toast.error('No se pudo guardar el gasto', {
+            description: 'Falta la asignación a un proyecto.',
+          })
+        }
       >
-        <X className="size-3.5" strokeWidth={1.75} />
-      </button>
+        Error
+      </Button>
+      <Button
+        variant="outline"
+        onClick={() =>
+          toast('Cotización archivada', {
+            action: { label: 'Deshacer', onClick: () => toast.success('Cotización restaurada') },
+          })
+        }
+      >
+        Con acción
+      </Button>
+      <Button
+        variant="outline"
+        onClick={() =>
+          toast.promise(delay(1500), {
+            loading: 'Generando PDF…',
+            success: 'PDF listo',
+            error: 'No se pudo generar el PDF',
+          })
+        }
+      >
+        Promesa
+      </Button>
     </div>
   );
 }
 
-// =============================================================================
-// 5.4 Progress indicators
-// =============================================================================
+// 5.5 ------------------------------------------------------------------------
 
-function ProgressBar({ value, thin = false }: { value: number; thin?: boolean }) {
+const GENERIC_ERROR: ActionAlertState = {
+  status: 'error',
+  message: 'No se pudo guardar el contrato: la unidad ya tiene un contrato vigente.',
+};
+
+const CONFLICT_ERROR: ActionAlertState = {
+  status: 'error',
+  code: 'conflict',
+  message: CONCURRENCY_CONFLICT_MESSAGE,
+};
+
+function ActionErrorDemo() {
+  return (
+    <div className="grid max-w-5xl gap-5 lg:grid-cols-2">
+      <LabeledBlock label="Error genérico">
+        <StepCard
+          title="Contrato"
+          hint="El mensaje va debajo de los campos, antes de las acciones."
+        >
+          <Field label="Renta mensual" required>
+            <Input defaultValue="12,500.00" className="bg-bg-base tabular-nums" readOnly />
+          </Field>
+          <ActionErrorAlert state={GENERIC_ERROR} />
+        </StepCard>
+      </LabeledBlock>
+      <LabeledBlock label="Conflicto de concurrencia (VersionField)">
+        <StepCard
+          title="Contrato"
+          hint="Otra persona guardó antes: se ofrece Recargar, no sobrescribir."
+        >
+          <Field label="Renta mensual" required>
+            <Input defaultValue="12,500.00" className="bg-bg-base tabular-nums" readOnly />
+          </Field>
+          <ActionErrorAlert state={CONFLICT_ERROR} />
+        </StepCard>
+      </LabeledBlock>
+    </div>
+  );
+}
+
+// 5.6 ------------------------------------------------------------------------
+
+function ProgressLine({
+  label,
+  value,
+  className,
+  indicatorClassName,
+}: {
+  label: string;
+  value: number;
+  className?: string;
+  indicatorClassName?: string;
+}) {
   return (
     <div className="space-y-1.5">
-      <div
-        className={`w-full overflow-hidden rounded-full bg-bg-elevated ${thin ? 'h-1' : 'h-1.5'}`}
-      >
-        <div className="h-full rounded-full bg-brand" style={{ width: `${value}%` }} />
-      </div>
+      <Progress
+        value={value}
+        aria-label={label}
+        className={cn('h-1.5', className)}
+        indicatorClassName={indicatorClassName}
+      />
       <div className="flex justify-between text-xs tabular-nums text-text-tertiary">
-        <span>Avance de etapa</span>
-        <span>{value}%</span>
+        <span>{label}</span>
+        <span>{value} %</span>
       </div>
     </div>
   );
 }
 
-function ProgressRing({
-  value,
-  size,
-  tone = 'info',
-}: {
-  value: number;
-  size: number;
-  tone?: 'info' | 'success';
-}) {
-  const stroke = size >= 40 ? 3 : 2.5;
-  const r = 18 - stroke / 2;
-  const circumference = 2 * Math.PI * r;
-  const offset = circumference * (1 - value / 100);
-  const valueColor = tone === 'success' ? 'var(--color-success)' : 'var(--color-brand)';
+function ProgressDemo() {
   return (
-    <div className="flex items-center gap-2.5">
-      <div className="relative" style={{ width: size, height: size }}>
-        <svg viewBox="0 0 36 36" className="size-full -rotate-90" aria-hidden>
-          <circle
-            cx="18"
-            cy="18"
-            r={r}
-            fill="none"
-            stroke="var(--color-bg-elevated)"
-            strokeWidth={stroke}
+    <div className="grid max-w-5xl gap-8 md:grid-cols-2">
+      <LabeledBlock label="Progress · h-1.5">
+        <div className="space-y-5">
+          <ProgressLine label="Avance de etapa" value={35} />
+          <ProgressLine
+            label="Cobrado del contrato"
+            value={72}
+            className="bg-success-subtle"
+            indicatorClassName="bg-success"
           />
-          <circle
-            cx="18"
-            cy="18"
-            r={r}
-            fill="none"
-            stroke={valueColor}
-            strokeWidth={stroke}
-            strokeLinecap="round"
-            strokeDasharray={circumference}
-            strokeDashoffset={offset}
+        </div>
+      </LabeledBlock>
+
+      <LabeledBlock label="ProgressRing · número dentro">
+        <div className="flex items-center gap-6">
+          <ProgressRing value={35} size={40} />
+          <ProgressRing value={72} size={48} color="var(--color-success)" />
+          <ProgressRing
+            value={112}
+            size={48}
+            color="var(--color-danger)"
+            numberClassName="text-danger-text"
           />
-        </svg>
-        {size >= 40 && (
-          <span className="absolute inset-0 flex items-center justify-center text-[11px] tabular-nums text-text-secondary">
-            {value}
-          </span>
-        )}
+        </div>
+      </LabeledBlock>
+
+      <LabeledBlock label="RatingRing / RatingValue · cinco segmentos">
+        <div className="flex items-center gap-6">
+          <RatingValue value={4.6} />
+          <RatingValue value={3.2} />
+          <RatingValue value={1.4} />
+          <RatingRing value={5} size={24} />
+        </div>
+      </LabeledBlock>
+
+      <LabeledBlock label="StarRating · solo lectura">
+        <div className="flex items-center gap-6">
+          <StarRating value={5} />
+          <StarRating value={3} size={16} />
+        </div>
+      </LabeledBlock>
+    </div>
+  );
+}
+
+// 5.7 ------------------------------------------------------------------------
+
+type RecordRow = { icon: LucideIcon; label: string; value: React.ReactNode };
+
+const CHARGE_ROWS: RecordRow[] = [
+  { icon: Receipt, label: 'Cobro', value: 'Renta de agosto' },
+  { icon: User, label: 'Inquilino', value: 'Carla Mendoza' },
+  {
+    icon: FileText,
+    label: 'Monto',
+    value: <span className="tabular-nums">{formatCurrency(12500)}</span>,
+  },
+];
+
+function RecordRows({ rows }: { rows: RecordRow[] }) {
+  return (
+    <div className="divide-y divide-border rounded-lg border bg-card">
+      {rows.map((row) => (
+        <div key={row.label} className="flex items-center gap-3 px-4 py-3">
+          <IconCircle icon={row.icon} />
+          <span className="min-w-0 flex-1 text-sm text-muted-foreground">{row.label}</span>
+          <span className="text-right text-sm font-medium text-foreground">{row.value}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function RoleCard({
+  role,
+  hint,
+  children,
+}: {
+  role: string;
+  hint: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className={cn(DETAIL_CARD_CLASS, 'p-5')}>
+      <p className="text-sm font-semibold text-text-primary">{role}</p>
+      <p className="mt-0.5 text-xs text-text-tertiary">{hint}</p>
+      <div className="mt-4 flex items-center gap-3 border-t border-border-subtle pt-4">
+        <IconCircle icon={Receipt} tone="success" />
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-medium text-text-primary">Renta de agosto</p>
+          <p className="text-xs text-text-tertiary">
+            Carla Mendoza · Registrado el {formatDate('2026-08-01')}
+          </p>
+        </div>
+        <p className="text-sm font-medium tabular-nums text-text-primary">
+          {formatCurrency(12500)}
+        </p>
       </div>
-      <span className="text-xs tabular-nums text-text-tertiary">{value}%</span>
+      <div className="mt-4 flex items-center gap-2">{children}</div>
+    </div>
+  );
+}
+
+const CORRECTION_FORM_ID = 'correction-request-form';
+
+function PermissionsDemo() {
+  const [open, setOpen] = React.useState(false);
+
+  return (
+    <div className="grid max-w-5xl gap-5 lg:grid-cols-3">
+      <RoleCard role="Admin" hint="Edita registros financieros y ve el menú ⋯ con Borrar.">
+        <Button variant="outline" size="sm">
+          <Pencil strokeWidth={1.5} />
+          Editar
+        </Button>
+        <Button variant="ghost" size="icon-sm" aria-label="Más acciones">
+          <MoreHorizontal strokeWidth={1.5} />
+        </Button>
+      </RoleCard>
+
+      <RoleCard
+        role="Coordinador"
+        hint="No edita cobros ya creados: en su lugar ve la alternativa."
+      >
+        <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
+          <MessageSquareText strokeWidth={1.5} />
+          Solicitar corrección
+        </Button>
+      </RoleCard>
+
+      <div className={cn(DETAIL_CARD_CLASS, 'p-5')}>
+        <div className="flex items-center gap-2">
+          <p className="text-sm font-semibold text-text-primary">Así no</p>
+          <Badge tone="danger">evitar</Badge>
+        </div>
+        <p className="mt-0.5 text-xs text-text-tertiary">
+          Botón deshabilitado sin alternativa ni explicación: el usuario no sabe qué hacer.
+        </p>
+        <div className="mt-4 flex items-center gap-2 border-t border-border-subtle pt-4">
+          <Button variant="outline" size="sm" disabled>
+            <Pencil strokeWidth={1.5} />
+            Editar
+          </Button>
+        </div>
+      </div>
+
+      <NajaModal
+        open={open}
+        onOpenChange={setOpen}
+        icon={MessageSquareText}
+        headerAlign="center"
+        size="md"
+        footerMuted
+        title="Solicitar corrección"
+        description="El admin recibe un recordatorio con tu solicitud y corrige el registro."
+        footer={
+          <>
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              Cancelar
+            </Button>
+            <Button type="submit" form={CORRECTION_FORM_ID}>
+              Enviar solicitud
+            </Button>
+          </>
+        }
+      >
+        {open && (
+          <form
+            key="new"
+            id={CORRECTION_FORM_ID}
+            className="space-y-4"
+            onSubmit={(event) => {
+              event.preventDefault();
+              setOpen(false);
+              toast.success('Solicitud enviada al admin');
+            }}
+          >
+            <RecordRows rows={CHARGE_ROWS} />
+            <Field label="¿Qué hay que corregir?" required>
+              <Textarea
+                name="reason"
+                required
+                rows={3}
+                autoFocus
+                placeholder="Ej. El monto correcto es $12,000; se capturó con el recargo."
+                className="bg-bg-base"
+              />
+            </Field>
+          </form>
+        )}
+      </NajaModal>
     </div>
   );
 }

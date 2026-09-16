@@ -67,7 +67,7 @@ export function StarRatingInput({
           onMouseEnter={() => setHover(i)}
           aria-label={`${i} ${i === 1 ? 'estrella' : 'estrellas'}`}
           aria-pressed={value >= i}
-          className="rounded-sm p-0.5 transition-transform hover:scale-110 focus-visible:shadow-focus focus-visible:outline-none"
+          className="rounded-sm p-0.5 transition-colors focus-visible:shadow-focus focus-visible:outline-none"
         >
           <Star
             size={size}

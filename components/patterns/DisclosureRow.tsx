@@ -53,7 +53,7 @@ export function DisclosureRow({
             className={cn(
               'flex min-w-0 flex-1 items-center gap-2 transition-opacity duration-200',
               !persistentBadge && 'group-data-[state=open]:opacity-0',
-              summary && 'text-[13px] font-normal text-muted-foreground',
+              summary && 'text-sm font-normal text-muted-foreground',
             )}
           >
             {badge}

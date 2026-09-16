@@ -105,7 +105,7 @@ export function ConfirmDeleteModal({
           <AlertDialogAction
             onClick={onConfirm}
             disabled={!canConfirm}
-            className="bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/30"
+            className="bg-destructive text-white hover:bg-destructive/90 focus-visible:shadow-focus"
           >
             {isLoading ? 'Eliminando…' : confirmLabel}
           </AlertDialogAction>

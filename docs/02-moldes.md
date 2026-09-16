@@ -1,24 +1,24 @@
 # Moldes de pantalla
 
-> Versión consolidada 2.0 · 16/09/2026. Complementa `01-sistema.md`.
-> Un molde = una receta completa de pantalla o de pieza grande: anatomía, componentes que la arman, estado en la URL y referencia viva en NAJA. Antes de construir una vista, elegir el molde y copiarlo; desviarse requiere una razón escrita.
-> Las capturas claro/oscuro de cada molde se generan con el showcase del kit (fase 4) y se enlazan aquí.
+> Versión 2.0 · 16/09/2026 · copia del kit. Complementa `01-sistema.md`.
+> Un molde = una receta completa de pantalla o de pieza grande: anatomía, componentes que la arman, estado en la URL y referencia viva en este repositorio (`/demo/*` dentro del shell y `/design-system`). Antes de construir una vista, elegir el molde y copiarlo; desviarse requiere una razón escrita.
+> Capturas claro/oscuro en `docs/capturas/`.
 
 | # | Molde | Cuándo | Referencia viva |
 | --- | --- | --- | --- |
-| M0 | Anatomía de página y tabs de módulo | Toda página del dashboard | `/finanzas`, `/proyectos/[id]` |
-| M1 | Lista plana | Índice de una entidad sin ficha en panel | `/proyectos`, Finanzas › Movimientos |
-| M2 | Lista + ficha en panel | Índice donde seleccionar abre la ficha sin salir | `/cotizaciones`, tabs del proyecto |
-| M3 | Ficha en panel | Detalle de un registro o transacción | Finanzas › Movimientos, `QuoteDetailPanel` |
-| M4 | Ficha en página | Detalle de una entidad raíz con varios tabs | `/proyectos/[id]` |
-| M5 | Cockpit / dashboard | Resumen de un módulo o de la empresa | Finanzas › Resumen |
-| M6 | Alta en drawer | Crear sin salir de la lista o de la ficha | `NewWorkOrderDrawer`, `NewQuoteForm` |
-| M7 | Alta en página enfocada | Alta larga por pasos | `/propiedades/nueva`, `/catalogo/nuevo` |
-| M8 | Modal de formulario | Captura corta o cierre de un flujo | `WorkOrderCloseModal` |
-| M9 | Modal destructivo | Borrar, cancelar, rescindir | `ConfirmDeleteModal` |
-| M10 | Página de configuración | Catálogos y ajustes | `/configuracion/*` |
-| M11 | Estados | Vacío, cargando, error, concurrencia | `EmptyState`, `DetailSkeleton` |
-| M12 | Filtros de periodo | Toda vista financiera | `MonthPicker` |
+| M0 | Anatomía de página y tabs de módulo | Toda página del dashboard | `/demo/ficha`, showcase › Moldes |
+| M1 | Lista plana | Índice de una entidad sin ficha en panel | `/demo/lista`, showcase › Moldes |
+| M2 | Lista + ficha en panel | Índice donde seleccionar abre la ficha sin salir | `/demo/lista?ver=…` |
+| M3 | Ficha en panel | Detalle de un registro o transacción | `/demo/lista?ver=…` |
+| M4 | Ficha en página | Detalle de una entidad raíz con varios tabs | `/demo/ficha` |
+| M5 | Cockpit / dashboard | Resumen de un módulo o de la empresa | `/demo` |
+| M6 | Alta en drawer | Crear sin salir de la lista o de la ficha | `/demo/lista` › «Nueva orden» |
+| M7 | Alta en página enfocada | Alta larga por pasos | `/nuevo` |
+| M8 | Modal de formulario | Captura corta o cierre de un flujo | showcase › Modales, `/demo/configuracion` |
+| M9 | Modal destructivo | Borrar, cancelar, rescindir | `ConfirmDeleteModal` (showcase › Modales) |
+| M10 | Página de configuración | Catálogos y ajustes | `/demo/configuracion` |
+| M11 | Estados | Vacío, cargando, error, concurrencia | showcase › Estados |
+| M12 | Filtros de periodo | Toda vista financiera | `MonthPicker` (showcase › Formularios) |
 
 ---
 
@@ -31,7 +31,7 @@ PageContainer (max-w 1700, p-6 md:p-8, space-y-6)
 ```
 
 - **Sin `PageHeader`** en módulos operativos: el sidebar ya nombra el módulo y la primera fila útil es la toolbar o los tabs. `PageHeader` (migaja + título + descripción) se reserva a Configuración y a páginas de detalle.
-- **Tabs de módulo** (`Tabs variant="line"` o el par `FinanzasTabs` / `ProjectTabs`): fila `border-b border-border-subtle`, triggers `px-3 py-2 text-sm`, activo en `text-text-primary` con subrayado `h-0.5 bg-foreground` que se desliza (`translateX` + `width` medidos, 300 ms; la última posición vive en memoria de módulo para que no salte al remontar). Contenido del tab con `animate-in fade-in-0 slide-in-from-bottom-1 duration-300`. Cada tab es `?tab=` en la URL. Tope: **siete** tabs; lo nuevo entra como card o como vista de un `SegmentedControl` dentro de un tab.
+- **Tabs de módulo** (`Tabs variant="line"`): fila `border-b border-border-subtle`, triggers `px-3 py-2 text-sm`, activo en `text-text-primary` con subrayado `h-0.5 bg-foreground` que se desliza (`translateX` + `width` medidos, 300 ms; la última posición vive en memoria de módulo para que no salte al remontar). Contenido del tab con `animate-in fade-in-0 slide-in-from-bottom-1 duration-300`. Cada tab es `?tab=` en la URL. Tope: **siete** tabs; lo nuevo entra como card o como vista de un `SegmentedControl` dentro de un tab.
 - **Acción global del módulo** («+ Registrar ⌄», «Nueva cotización») a la derecha de los tabs o de la toolbar, negra, única.
 - El scroll vive en la página salvo en M2, donde vive dentro de la lista y del panel (`PageContainer className="flex h-full min-h-0 flex-col"`).
 
@@ -104,7 +104,7 @@ PageContainer
 
 - **Sin hero card**: los datos viven en las cards del primer tab. El encabezado es texto + acciones.
 - **Cards de detalle** (`DetailCard`): `DetailCardHeader` (título `text-sm font-semibold` + subline terciaria + enlace «Ver … ↗» con `ArrowUpRight`), cuerpo `DenseList` / `DenseRow` (grid `32px · 1fr · auto`, `px-5 py-2.5`, hover tinte, cada fila navega a donde se resuelve), `KpiTile` (label `text-sm` secundaria + icono, valor `text-2xl font-semibold`, detalle terciario), `Meter` (barra `h-1.5` con relleno y pista del mismo ramp, clicable), `SignedAmount`, `RowPill`.
-- **Cuándo página y cuándo panel**: entidad raíz con tres o más tabs (proyecto, propiedad, contrato, OT, cliente) = página; registro, transacción o elemento de una lista (movimiento, cotización, etapa, pagaré) = panel M3. La hero card con foto (`/propiedades/[id]`, diseño 3a) es la variante para entidades donde la imagen es protagonista; el resto usa este encabezado.
+- **Cuándo página y cuándo panel**: entidad raíz con tres o más tabs (proyecto, cliente, contrato) = página; registro, transacción o elemento de una lista (movimiento, orden, etapa) = panel M3. La variante con hero card y foto queda para entidades donde la imagen es protagonista; el resto usa este encabezado.
 - Estado finalizado: banner de cierre como card nivel 3 con `IconCircle` en `success-subtle` o `danger-subtle` sustituye a la card principal; acciones cambian (Reabrir, Acta, Archivar).
 
 ## M5 · Cockpit / dashboard
@@ -149,7 +149,7 @@ app/(focused)/…  — sin sidebar
 │   └── confirmación: tile resumen + acción final
 ```
 
-- Para altas largas o con sub-entidades (propiedad con unidades, artículo con variantes). El scroll vive en el layout con `scrollbar-gutter: stable`; los pasos hacen scroll-to-top.
+- Para altas largas o con sub-entidades (una entidad con varias unidades, un artículo con variantes). El scroll vive en el layout con `scrollbar-gutter: stable`; los pasos hacen scroll-to-top.
 - **`SettingsCard`**: `rounded-lg border bg-card overflow-hidden`; header con título `font-semibold` + chip opcional («Opcional») + descripción; footer `border-t bg-muted/30 min-h-12 px-6 py-2.5` con hint a la izquierda y acción a la derecha. Sub-secciones repetibles en acordeón `DisclosureRow`.
 - Proporción 7/5 entre columna de formulario y columna de ayuda cuando hay dos columnas.
 

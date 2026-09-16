@@ -1,8 +1,8 @@
 # Sistema de diseño — estilo Vercel / Geist
 
-> Versión consolidada 2.0 · 16/09/2026.
-> Describe el sistema **objetivo**, ya con las dieciséis decisiones de `docs/CONSOLIDACION_DISENO.md` aplicadas. Es el documento que viaja al kit de arranque: no contiene reglas de negocio ni nombres de módulos salvo como ejemplo. Lo que el código de NAJA todavía no cumple está listado en §12; hasta que NAJA migre, **ante una diferencia manda este documento**.
-> Complementa: `02-moldes.md` (recetas de pantalla), `03-modulos-naja.md` (crónica por módulo), `CHANGELOG.md`.
+> Versión 2.0 · 16/09/2026 · copia del kit.
+> Describe el sistema tal como está **implementado en este repositorio**: `app/globals.css`, `components/ui`, `components/shared`, `components/patterns`, `components/modals` y el showcase `/design-system` cumplen todo lo que sigue. Ante una diferencia entre este documento y el código del kit, es un bug del kit.
+> Complementa: `02-moldes.md` (recetas de pantalla). El origen y el historial de decisiones viven en el repositorio `naja-app-2` (`docs/design/CHANGELOG.md`).
 
 ---
 
@@ -304,34 +304,14 @@ Las 57 primitivas de shadcn viven copiadas en el repo. Ajustes que las distingue
 
 ---
 
-## 12. Diferencias entre este sistema y el código de NAJA (16/09/2026)
+## 12. Estado en el kit
 
-Lo que este documento fija y NAJA todavía no cumple. Se corrige en el kit primero y en NAJA al migrar cada módulo (`docs/CONSOLIDACION_DISENO.md` §4 y §6).
+Todo lo anterior está aplicado en este repositorio. Ajustes hechos al extraer el kit desde NAJA (16/09/2026):
 
-| Concepto | NAJA hoy | Sistema | Dónde se corrige |
-| --- | --- | --- | --- |
-| Primario | `Button` default verde; negro solo donde se escribió `bg-foreground` | Negro por defecto | `globals.css --primary`, `button.tsx` |
-| Marca vs éxito | Un solo valor compartido; `--sidebar-ring` verde | Tokens separados; `sidebar-ring` = ring | `globals.css` |
-| Cards | Cinco recetas (plana, `shadow-sm + border-card`, nivel 3, OT `shadow-xs`, `Card` shadcn 12 px) | Escala §5 | `card.tsx`, cada módulo |
-| Hover de fila | `bg-bg-elevated`, `black/[0.03]`, `muted/50`, un `shadow-row` | `hover:bg-row-hover` | `globals.css`, `table.tsx`, `DetailPanel.tsx`, listas |
-| Tab activa | Subrayado `bg-brand` verde | `bg-foreground` | `tabs.tsx`, `ProjectTabs`, `FinanzasTabs` |
-| SegmentedControl | Default `tint`; cinco selectores de vista aún en tint | Default `switch` | `segmented-control.tsx`, Pagarés, Inventario |
-| Modales | 13 con `glassHeader`, 12 `Dialog` crudos | `NajaModal` Vercel | Cada modal al tocarlo |
-| Vista híbrida | Generación 1 en seis módulos | `HybridSplit` (M2) | Clientes, Contratos, Inquilinos, Propietarios, Subcontratistas, Inventario |
-| Apertura de página | Diez módulos con `PageHeader` | Toolbar o tabs | Cada módulo |
-| Eyebrows | 71 etiquetas `uppercase tracking-wide` | Sentence case | Inventario, Configuración, modales seccionados |
-| Acordeones | Tres `<details>` en Inventario, clase `.details-animate` | `DisclosureRow` / `Collapsible` | Inventario, `globals.css` |
-| Avatar `tone` | Literales `amber-600`, `blue-600` | Tokens | `avatar.tsx` |
-| Literales de color | 10 archivos fuera de PDFs y catálogos | Ninguno | `KpiCard` (se borra), `SiteHeader`, `MaterialAvatar`, fichas de Inquilinos / Propietarios / Contratos, `SupplierMaterialsManager` |
-| Foco | ~20 archivos con `focus-visible:ring-N` | `shadow-focus` | Módulos listados en la auditoría |
-| `Card` shadcn | `rounded-xl` | `rounded-lg` | `card.tsx` |
-| `PageContainer` | Falta en Materiales, Órdenes (hub), Pagarés | Obligatorio | Esas tres páginas |
-| Fechas ad hoc | Cinco `toLocaleDateString` | Formatters | Contratos, Inventario, `pagareStatus` |
-| Nombres de tokens | `--sb-*` | `--ds-*` en el kit | Solo en el kit |
-| Patrones muertos | `KpiCard`, `DataTable`, `EntityFormModal` sin consumidores | Borrados | `components/shared`, `components/patterns` |
-| Pendientes históricos | Tres `TODO(soft-bento)` | Ninguno | `rg 'TODO\(soft-bento\)'` al migrar cada módulo |
-
----
+- Variables intermedias renombradas de `--sb-*` a `--ds-*`; `--primary` = `foreground`; `--sidebar-ring` = `--ring`; token nuevo `--ds-row-hover` / `bg-row-hover`.
+- `Card` en `rounded-lg` y nivel 3; `Table` con `hover:bg-row-hover`; `Tabs line` con subrayado `foreground`; `SegmentedControl` con `switch` por defecto; `Avatar` con tonos por token; foco `shadow-focus` también en el sidebar.
+- `FormCard` sin sombra (nivel 0). Retirados `KpiCard`, `DataTable`, `EntityFormModal` y la clase `.details-animate`.
+- Sin dependencias de datos: el shell trae un usuario ficticio y las páginas de `/demo` usan datos locales.
 
 ## 13. Test mental antes de aprobar un componente
 

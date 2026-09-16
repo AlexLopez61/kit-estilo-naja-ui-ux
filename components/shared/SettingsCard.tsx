@@ -37,7 +37,7 @@ export function SettingsCard({
       <div className="flex flex-col gap-4 px-6 py-5">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-medium text-foreground">{title}</h2>
+            <h2 className="text-base font-semibold text-foreground">{title}</h2>
             {badge && (
               <span className="inline-flex items-center rounded-sm bg-muted px-1.5 py-0.5 text-[11px] text-muted-foreground">
                 {badge}

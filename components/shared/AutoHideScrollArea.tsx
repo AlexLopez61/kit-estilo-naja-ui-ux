@@ -11,7 +11,7 @@
  * que sea un elemento normal — Radix ScrollArea en modo `type="scroll"`. La
  * barra es overlay (no reserva ancho) y Radix oculta la nativa del viewport
  * por su cuenta. Usa los mismos tokens de color que la barra nativa
- * (`--sb-scrollbar-thumb` / `-hover`) para que se lea igual en ambos temas.
+ * (`--ds-scrollbar-thumb` / `-hover`) para que se lea igual en ambos temas.
  *
  * Alturas: el Root necesita altura definida (p. ej. `min-h-0 flex-1` dentro
  * de una columna flex acotada). Cuando no la tiene (móvil, o paneles fuera de
@@ -45,7 +45,7 @@ import { cn } from '@/lib/utils';
 const SCROLLBAR_CLASS =
   'z-30 flex touch-none p-0.5 select-none data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0 data-[state=visible]:animate-in data-[state=visible]:fade-in-0 duration-300 motion-reduce:animate-none';
 const THUMB_CLASS =
-  'relative flex-1 rounded-full bg-(--sb-scrollbar-thumb) transition-colors hover:bg-(--sb-scrollbar-thumb-hover)';
+  'relative flex-1 rounded-full bg-(--ds-scrollbar-thumb) transition-colors hover:bg-(--ds-scrollbar-thumb-hover)';
 
 export function AutoHideScrollArea({
   className,

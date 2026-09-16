@@ -23,7 +23,8 @@ export const CONTROL_CLASS = 'h-11 text-base md:text-base';
 export const SELECT_CLASS = 'w-full text-base data-[size=default]:h-11';
 export const TEXTAREA_CLASS = 'px-3.5 py-2.5 text-base md:text-base';
 
-export const CHIP_CLASS = 'rounded-md border px-3.5 py-2 text-base transition-colors';
+export const CHIP_CLASS =
+  'rounded-md border px-3.5 py-2 text-base transition-colors outline-none focus-visible:border-ring/50 focus-visible:shadow-focus';
 export const CHIP_ACTIVE = 'border-border-strong bg-bg-elevated text-text-primary font-medium';
 export const CHIP_IDLE =
   'border-border-subtle bg-bg-base text-text-secondary hover:text-text-primary';

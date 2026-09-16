@@ -212,7 +212,7 @@ export function ShowcaseSidebar({
       >
         {!collapsed && (
           <div className="min-w-0">
-            <p className="truncate text-xs tracking-[-0.01em] text-text-primary">Soft Bento Dark</p>
+            <p className="truncate text-xs tracking-[-0.01em] text-text-primary">Kit Estilo NAJA</p>
             <p className="text-[11px] text-text-tertiary">v1.0.1</p>
           </div>
         )}
@@ -221,7 +221,7 @@ export function ShowcaseSidebar({
           onClick={onToggle}
           aria-label={collapsed ? 'Expandir navegación' : 'Colapsar navegación'}
           aria-pressed={collapsed}
-          className="flex size-7 shrink-0 items-center justify-center rounded-md text-text-tertiary outline-none transition-colors hover:bg-bg-elevated hover:text-text-primary focus-visible:ring-2 focus-visible:ring-brand"
+          className="flex size-7 shrink-0 items-center justify-center rounded-md text-text-tertiary outline-none transition-colors hover:bg-bg-elevated hover:text-text-primary focus-visible:shadow-focus"
         >
           {collapsed ? (
             <PanelLeft className="size-4" strokeWidth={1.5} />
@@ -302,7 +302,7 @@ function CategoryBlock({
         } hover:bg-bg-elevated`}
       >
         <Icon className="size-4 shrink-0" strokeWidth={1.5} />
-        <span className="flex-1 truncate text-left text-xs uppercase tracking-wider">
+        <span className="flex-1 truncate text-left text-xs font-medium">
           {category.label}
         </span>
         <ChevronDown
@@ -327,7 +327,7 @@ function CategoryBlock({
                 aria-current={isActive ? 'true' : undefined}
                 className={`block truncate border-l-2 px-3 py-1.5 text-sm transition-colors duration-150 ${
                   isActive
-                    ? 'border-brand bg-bg-elevated text-text-primary'
+                    ? 'border-foreground bg-bg-elevated text-text-primary'
                     : 'border-transparent text-text-secondary hover:text-text-primary'
                 }`}
               >

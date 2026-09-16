@@ -30,7 +30,7 @@ export const DETAIL_CARD_CLASS =
 
 /** Fila clicable de lista densa: fondo en hover y foco visible por teclado. */
 export const DENSE_ROW_CLASS =
-  'relative grid w-full grid-cols-[32px_minmax(0,1fr)_auto] items-center gap-x-2.5 px-5 py-2.5 text-left transition-colors duration-150 outline-none hover:bg-bg-elevated focus-visible:shadow-focus motion-reduce:transition-none';
+  'relative grid w-full grid-cols-[32px_minmax(0,1fr)_auto] items-center gap-x-2.5 px-5 py-2.5 text-left transition-colors duration-150 outline-none hover:bg-row-hover focus-visible:shadow-focus motion-reduce:transition-none';
 
 export function DetailCard({ className, children, ...props }: React.ComponentProps<'section'>) {
   return (
@@ -314,7 +314,7 @@ export function Meter({
         type="button"
         onClick={onClick}
         aria-label={ariaLabel}
-        className="-mx-2 block w-[calc(100%+1rem)] cursor-pointer space-y-1.5 rounded-md px-2 py-1.5 text-left transition-colors duration-150 outline-none hover:bg-black/[0.03] focus-visible:shadow-focus motion-reduce:transition-none dark:hover:bg-white/[0.05]"
+        className="-mx-2 block w-[calc(100%+1rem)] cursor-pointer space-y-1.5 rounded-md px-2 py-1.5 text-left transition-colors duration-150 outline-none hover:bg-row-hover focus-visible:shadow-focus motion-reduce:transition-none"
       >
         {body}
       </button>

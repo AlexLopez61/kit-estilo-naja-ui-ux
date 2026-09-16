@@ -28,7 +28,7 @@ export function ShowcaseTabs({ defaultValue, items }: Props) {
               'text-text-secondary transition-colors duration-150',
               'hover:text-text-primary',
               'focus-visible:text-text-primary focus-visible:outline-none',
-              'data-[state=active]:border-brand data-[state=active]:text-text-primary',
+              'data-[state=active]:border-foreground data-[state=active]:text-text-primary',
             )}
           >
             {item.label}

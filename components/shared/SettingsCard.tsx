@@ -94,10 +94,10 @@ export function Field({
   );
 }
 
-/** Micro-etiqueta uppercase de subsección dentro de un card. */
+/** Micro-etiqueta de subsección dentro de un card (sentence case). */
 export function SubLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mb-3 text-[11px] font-medium tracking-[0.06em] text-muted-foreground uppercase">
+    <p className="mb-3 text-xs font-medium text-muted-foreground">
       {children}
     </p>
   );

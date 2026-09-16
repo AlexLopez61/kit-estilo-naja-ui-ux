@@ -1,7 +1,7 @@
 'use client';
 
 import { Check, ChevronsUpDown } from 'lucide-react';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import {
   Command,
   CommandEmpty,
@@ -38,6 +38,7 @@ export function ShowcaseCombobox({
 }: Props) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(defaultValue);
+  const listId = useId();
   const selected = options.find((o) => o.value === value);
 
   return (
@@ -47,9 +48,11 @@ export function ShowcaseCombobox({
           type="button"
           role="combobox"
           aria-expanded={open}
+          aria-haspopup="listbox"
+          aria-controls={listId}
           className={cn(
-            'flex h-9 w-full items-center justify-between gap-2 rounded-md border border-border-default bg-bg-surface px-3 text-sm outline-none transition-colors hover:bg-bg-elevated focus-visible:ring-2 focus-visible:ring-brand',
-            selected ? 'text-text-primary' : 'text-text-tertiary',
+            'flex h-9 w-full items-center justify-between gap-2 rounded-md border border-border-default bg-bg-surface px-3 text-sm outline-none transition-colors hover:bg-bg-elevated focus-visible:border-ring/50 focus-visible:shadow-focus',
+            selected ? 'text-text-primary' : 'text-text-disabled',
             className,
           )}
         >
@@ -60,7 +63,7 @@ export function ShowcaseCombobox({
       <PopoverContent align="start" className="w-(--radix-popover-trigger-width) p-0">
         <Command>
           <CommandInput placeholder={searchPlaceholder} />
-          <CommandList>
+          <CommandList id={listId}>
             <CommandEmpty>{emptyText}</CommandEmpty>
             <CommandGroup>
               {options.map((opt) => (
@@ -80,7 +83,7 @@ export function ShowcaseCombobox({
                   </span>
                   <Check
                     className={cn(
-                      'size-4 text-brand',
+                      'size-4 text-text-primary',
                       opt.value === value ? 'opacity-100' : 'opacity-0',
                     )}
                     strokeWidth={1.5}

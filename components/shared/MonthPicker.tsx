@@ -137,7 +137,7 @@ export function MonthPicker({
   // bg-elevated (#111114), así que bg-elevated ahí resulta invisible.
   const periodButton = (selected: boolean) =>
     cn(
-      'focus-visible:ring-brand rounded-md px-1 py-1.5 text-sm outline-none transition-colors focus-visible:ring-2',
+      'focus-visible:shadow-focus rounded-md px-1 py-1.5 text-sm outline-none transition-colors',
       selected
         ? 'bg-foreground text-background'
         : 'text-text-secondary hover:bg-bg-overlay hover:text-text-primary',
@@ -155,7 +155,7 @@ export function MonthPicker({
         onClick={() => step(-1)}
         disabled={stepDisabled}
         aria-label={`${stepLabel === 'año' ? 'Año' : stepLabel === 'trimestre' ? 'Trimestre' : 'Mes'} anterior`}
-        className="text-text-tertiary hover:bg-bg-elevated hover:text-text-primary focus-visible:ring-brand grid w-8 place-items-center outline-none transition-colors focus-visible:ring-2 focus-visible:ring-inset disabled:pointer-events-none disabled:opacity-40"
+        className="text-text-tertiary hover:bg-bg-elevated hover:text-text-primary focus-visible:shadow-focus grid w-8 place-items-center outline-none transition-colors disabled:pointer-events-none disabled:opacity-40"
       >
         <ChevronLeft className="size-4" strokeWidth={1.5} />
       </button>
@@ -170,7 +170,7 @@ export function MonthPicker({
         <PopoverTrigger asChild>
           <button
             type="button"
-            className="border-border-subtle text-text-primary hover:bg-bg-elevated focus-visible:ring-brand flex items-center gap-2 border-x px-2.5 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-inset"
+            className="border-border-subtle text-text-primary hover:bg-bg-elevated focus-visible:shadow-focus flex items-center gap-2 border-x px-2.5 text-sm outline-none transition-colors"
           >
             <CalendarIcon className="text-text-tertiary size-3.5" strokeWidth={1.5} />
             <span className="whitespace-nowrap">{triggerLabel(period, allTimeLabel)}</span>
@@ -183,7 +183,7 @@ export function MonthPicker({
               type="button"
               onClick={() => setGridYear((y) => y - 1)}
               aria-label="Año anterior"
-              className="text-text-tertiary hover:bg-bg-overlay hover:text-text-primary focus-visible:ring-brand grid size-7 place-items-center rounded-md outline-none transition-colors focus-visible:ring-2"
+              className="text-text-tertiary hover:bg-bg-overlay hover:text-text-primary focus-visible:shadow-focus grid size-7 place-items-center rounded-md outline-none transition-colors"
             >
               <ChevronLeft className="size-4" strokeWidth={1.5} />
             </button>
@@ -192,7 +192,7 @@ export function MonthPicker({
               type="button"
               onClick={() => setGridYear((y) => y + 1)}
               aria-label="Año siguiente"
-              className="text-text-tertiary hover:bg-bg-overlay hover:text-text-primary focus-visible:ring-brand grid size-7 place-items-center rounded-md outline-none transition-colors focus-visible:ring-2"
+              className="text-text-tertiary hover:bg-bg-overlay hover:text-text-primary focus-visible:shadow-focus grid size-7 place-items-center rounded-md outline-none transition-colors"
             >
               <ChevronRight className="size-4" strokeWidth={1.5} />
             </button>
@@ -276,7 +276,7 @@ export function MonthPicker({
         onClick={() => step(1)}
         disabled={stepDisabled}
         aria-label={`${stepLabel === 'año' ? 'Año' : stepLabel === 'trimestre' ? 'Trimestre' : 'Mes'} siguiente`}
-        className="text-text-tertiary hover:bg-bg-elevated hover:text-text-primary focus-visible:ring-brand grid w-8 place-items-center outline-none transition-colors focus-visible:ring-2 focus-visible:ring-inset disabled:pointer-events-none disabled:opacity-40"
+        className="text-text-tertiary hover:bg-bg-elevated hover:text-text-primary focus-visible:shadow-focus grid w-8 place-items-center outline-none transition-colors disabled:pointer-events-none disabled:opacity-40"
       >
         <ChevronRight className="size-4" strokeWidth={1.5} />
       </button>

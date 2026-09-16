@@ -32,7 +32,7 @@ export function Subsection({ id, title, caption, children }: Props) {
   return (
     <div id={anchorId} className="space-y-6 scroll-mt-20">
       <div>
-        <h3 className="text-base text-text-primary">{title}</h3>
+        <h3 className="text-base font-semibold text-text-primary">{title}</h3>
         {caption && <p className="mt-1 text-sm text-text-secondary">{caption}</p>}
       </div>
       <div>{children}</div>

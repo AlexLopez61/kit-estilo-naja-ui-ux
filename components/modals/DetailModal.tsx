@@ -84,7 +84,7 @@ export function DetailModal({
             key={section.title}
             className="space-y-2.5 rounded-lg border border-border bg-card p-4"
           >
-            <h3 className="text-xs tracking-wide text-muted-foreground uppercase">
+            <h3 className="text-xs font-medium text-muted-foreground">
               {section.title}
             </h3>
             <dl className="space-y-2">

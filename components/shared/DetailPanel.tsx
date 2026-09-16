@@ -395,7 +395,7 @@ export function tableRowClass(selected: boolean, zebra: boolean): string {
     'border-border-subtle relative grid min-h-16 cursor-pointer items-center gap-x-4 border-b px-4 text-left outline-none transition-[background-color,box-shadow] duration-150 last:border-0 focus-visible:shadow-focus motion-reduce:transition-none',
     selected
       ? 'bg-bg-elevated shadow-row-selected z-10'
-      : cn('hover:bg-black/[0.03] dark:hover:bg-white/[0.05]', zebra && 'bg-bg-base'),
+      : cn('hover:bg-row-hover', zebra && 'bg-bg-base'),
   );
 }
 

@@ -88,9 +88,9 @@ export function MonthOnlyPicker({
   const next = month === 12 ? { year: year + 1, month: 1 } : { year, month: month + 1 };
 
   const stepButton =
-    'grid w-8 place-items-center text-muted-foreground outline-none transition-colors hover:bg-muted/40 hover:text-foreground focus-visible:ring-brand focus-visible:ring-2 focus-visible:ring-inset disabled:pointer-events-none disabled:opacity-40';
+    'grid w-8 place-items-center text-muted-foreground outline-none transition-colors hover:bg-muted/40 hover:text-foreground focus-visible:shadow-focus disabled:pointer-events-none disabled:opacity-40';
   const yearNavButton =
-    'grid size-7 place-items-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-brand focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-40';
+    'grid size-7 place-items-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:shadow-focus disabled:pointer-events-none disabled:opacity-40';
 
   return (
     <div
@@ -119,7 +119,7 @@ export function MonthOnlyPicker({
         <PopoverTrigger asChild>
           <button
             type="button"
-            className="focus-visible:ring-brand flex items-center gap-2 border-x px-2.5 text-sm text-foreground outline-none transition-colors hover:bg-muted/40 focus-visible:ring-2 focus-visible:ring-inset"
+            className="focus-visible:shadow-focus flex items-center gap-2 border-x px-2.5 text-sm text-foreground outline-none transition-colors hover:bg-muted/40"
           >
             <CalendarIcon className="size-3.5 text-muted-foreground" strokeWidth={1.5} />
             <span className="whitespace-nowrap">
@@ -167,7 +167,7 @@ export function MonthOnlyPicker({
                   aria-pressed={isSelected}
                   aria-current={isCurrent ? 'date' : undefined}
                   className={cn(
-                    'focus-visible:ring-brand rounded-md px-1 py-1.5 text-sm outline-none transition-colors focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-40',
+                    'focus-visible:shadow-focus rounded-md px-1 py-1.5 text-sm outline-none transition-colors disabled:pointer-events-none disabled:opacity-40',
                     isSelected
                       ? 'bg-foreground text-background'
                       : 'text-muted-foreground hover:bg-muted hover:text-foreground',

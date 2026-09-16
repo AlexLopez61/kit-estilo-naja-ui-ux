@@ -95,7 +95,7 @@ export function OrderRow({
           </span>
         </span>
       </span>
-      <span className={cn('min-w-0 items-center gap-2', SECONDARY[density], 'lg:flex')}>
+      <span className={cn('min-w-0 items-center gap-2', density === 'full' ? 'hidden lg:flex' : 'hidden')}>
         <Avatar name={order.client} size={24} square={order.clientIsCompany} />
         <span className="truncate text-sm text-text-secondary">{order.client}</span>
       </span>
@@ -105,7 +105,7 @@ export function OrderRow({
       <span className={cn('text-sm text-text-secondary tabular-nums', SECONDARY[density])}>
         {formatDate(order.dueAt)}
       </span>
-      <span className={cn('min-w-0 items-center gap-2', SECONDARY[density], 'lg:flex')}>
+      <span className={cn('min-w-0 items-center gap-2', density === 'full' ? 'hidden lg:flex' : 'hidden')}>
         <Avatar name={assignee} size={20} />
         <span className="truncate text-sm text-text-secondary">{assignee}</span>
       </span>

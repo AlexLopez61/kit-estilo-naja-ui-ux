@@ -170,7 +170,7 @@ NajaModal size="md|lg|xl" headerAlign="center" footerMuted icon={Lucide}
 - Contexto de solo lectura como **filas-card outline** (`divide-y rounded-lg border`, chip + label + valor a la derecha). Desgloses de dinero como tabla Concepto / Monto con fila total. Secciones ricas como `DisclosureRow`.
 - Éxito con estado propio dentro del modal (círculo que escala + palomita que se dibuja, 200/300 ms) cuando el flujo termina ahí (cobro).
 - `dismissable={false}` solo en wizards. Variantes listas: `QuickFormModal` (campos simples), `DetailModal` (lectura con avatar y secciones), `WizardModal` (pasos con validez por paso). Campos compuestos siempre en inputs separados.
-- **No**: `glassHeader` / `glassFooter` (legado, ver `03-modulos-naja.md`), `Dialog` crudo, títulos en mayúsculas.
+- **No**: `glassHeader` / `glassFooter` (legado heredado de NAJA, solo válido en `DetailPanelFrame`), `Dialog` crudo, títulos en mayúsculas.
 
 ## M9 · Modal destructivo
 

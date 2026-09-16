@@ -191,3 +191,21 @@ NajaModal size="md|lg|xl" headerAlign="center" footerMuted icon={Lucide}
 ## M12 · Filtros de periodo
 
 `MonthPicker` como cara única de las vistas financieras: mes primario con stepper ‹ ›, periodos cerrados (trimestre, año, histórico) en el menú; emite `{from, to, preset}` a la URL (`?desde&hasta&preset`). `DateRangePicker` solo donde el rango libre ya existía y no es la cara principal. `MonthOnlyPicker` para estados de cuenta mensuales.
+
+---
+
+## Capturas
+
+Tomadas de las páginas de demo del kit (1440 × 960, Microsoft Edge) en ambos temas. Se regeneran con Playwright contra `pnpm start`.
+
+| Molde | Claro | Oscuro |
+| --- | --- | --- |
+| M1 Lista plana | [M1-lista-light](capturas/M1-lista-light.png) | [M1-lista-dark](capturas/M1-lista-dark.png) |
+| M2 + M3 Lista + ficha en panel | [M2-M3-lista-panel-light](capturas/M2-M3-lista-panel-light.png) | [M2-M3-lista-panel-dark](capturas/M2-M3-lista-panel-dark.png) |
+| M4 Ficha en página | [M4-ficha-pagina-light](capturas/M4-ficha-pagina-light.png) | [M4-ficha-pagina-dark](capturas/M4-ficha-pagina-dark.png) |
+| M5 Cockpit | [M5-cockpit-light](capturas/M5-cockpit-light.png) | [M5-cockpit-dark](capturas/M5-cockpit-dark.png) |
+| M7 Alta en página enfocada | [M7-pagina-enfocada-light](capturas/M7-pagina-enfocada-light.png) | [M7-pagina-enfocada-dark](capturas/M7-pagina-enfocada-dark.png) |
+| M10 Configuración | [M10-configuracion-light](capturas/M10-configuracion-light.png) | [M10-configuracion-dark](capturas/M10-configuracion-dark.png) |
+| Showcase | [showcase-light](capturas/showcase-light.png) | [showcase-dark](capturas/showcase-dark.png) |
+
+M6 (drawer de alta), M8 (modal) y M9 (destructivo) se ven en vivo en `/demo/lista` («Nueva orden»), `/demo/configuracion` («Agregar», «Eliminar») y en `/design-system` › Modales y drawers.

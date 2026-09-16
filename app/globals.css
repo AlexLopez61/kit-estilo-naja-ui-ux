@@ -1,0 +1,485 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+@layer base {
+  :root {
+    /* ── Shadcn compat tokens · Modo claro ─────────────────────────── */
+    /* Escala clara estilo Vercel (07/2026): neutros puros sin tinte azul,
+       bordes #eaeaea visibles y texto #171717 / #666 / #a1a1a1. */
+    --background: #fafafa;
+    --card: #ffffff;
+    --popover: #ffffff;
+    --muted: #ebebeb;
+    --foreground: rgba(0, 0, 0, 0.91);
+    --card-foreground: rgba(0, 0, 0, 0.91);
+    --popover-foreground: rgba(0, 0, 0, 0.91);
+    --muted-foreground: rgba(0, 0, 0, 0.72);
+    --border: rgba(0, 0, 0, 0.08);
+    --input: rgba(0, 0, 0, 0.08);
+    --ring: var(--ds-info); /* foco AZUL */
+    --primary: var(--foreground); /* primario NEGRO (consolidación 16/09/2026): CTA estilo Vercel */
+    --primary-foreground: var(--background);
+    --accent: #ebebeb;
+    --accent-foreground: rgba(0, 0, 0, 0.91);
+    --secondary: #f2f2f2;
+    --secondary-foreground: rgba(0, 0, 0, 0.91);
+    --destructive: #dc2626;
+    --chart-1: oklch(0.646 0.222 41.116);
+    --chart-2: oklch(0.6 0.118 184.704);
+    --chart-3: oklch(0.398 0.07 227.392);
+    --chart-4: oklch(0.828 0.189 84.429);
+    --chart-5: oklch(0.769 0.188 70.08);
+    --radius: 0.625rem;
+    --sidebar: #f2f2f2; /* = --ds-bg-elevated: el sidebar se separa del fondo #fafafa por tono, no solo por borde (Alex 02/09/2026) */
+    --sidebar-foreground: rgba(0, 0, 0, 0.91);
+    --sidebar-primary: var(--foreground);
+    --sidebar-primary-foreground: var(--background);
+    --sidebar-accent: #ebebeb;
+    --sidebar-accent-foreground: rgba(0, 0, 0, 0.91);
+    --sidebar-border: rgba(0, 0, 0, 0.08);
+    --sidebar-ring: var(--ring);
+
+    /* ── Sistema · vars intermedias · Modo claro ────────────────── */
+    /* Neutros Geist: base #fafafa, cards blancas, chips #f2f2f2/#ebebeb. */
+    --ds-bg-base: #fafafa;
+    --ds-bg-surface: #ffffff;
+    --ds-bg-elevated: #f2f2f2;
+    --ds-bg-overlay: #ebebeb;
+    /* Bordes: subtle ≈ #eaeaea sobre blanco (el borde de card de Vercel). */
+    --ds-border-subtle: rgba(0, 0, 0, 0.08);
+    --ds-border-default: rgba(0, 0, 0, 0.14);
+    --ds-border-strong: rgba(0, 0, 0, 0.22);
+    /* Contorno de cards/KPIs con shadow-sm: un paso entre subtle y default
+       (calibrado por Alex 02/09/2026 en Inquilinos). */
+    --ds-border-card: rgba(0, 0, 0, 0.12);
+    /* Texto: la escala de grises de Vercel — primario ≈ #171717, terciario
+       = #666 (su gris de metadata) y disabled ≈ #a1a1a1 (su placeholder),
+       con secundario como paso intermedio ≈ #474747. Ajuste 17/07: los
+       65/45/24% anteriores se leían débiles en modo claro. */
+    --ds-text-primary: rgba(0, 0, 0, 0.91);
+    --ds-text-secondary: rgba(0, 0, 0, 0.72);
+    --ds-text-tertiary: rgba(0, 0, 0, 0.6);
+    --ds-text-disabled: rgba(0, 0, 0, 0.37);
+    --ds-brand: #059669;
+    --ds-brand-hover: #047857;
+    --ds-brand-subtle: rgba(5, 150, 105, 0.1);
+    --ds-brand-text: #059669;
+    --ds-success: #059669;
+    --ds-success-subtle: rgba(5, 150, 105, 0.1);
+    --ds-success-text: #059669;
+    --ds-warning: #d97706;
+    --ds-warning-subtle: rgba(217, 119, 6, 0.1);
+    --ds-warning-text: #d97706;
+    --ds-danger: #dc2626;
+    --ds-danger-subtle: rgba(220, 38, 38, 0.1);
+    --ds-danger-text: #dc2626;
+    --ds-info: #2563eb;
+    --ds-info-subtle: rgba(37, 99, 235, 0.1);
+    --ds-info-text: #2563eb;
+    --ds-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --ds-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --ds-shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.14);
+    /* Filas de tabla en hover / seleccionada (Alex 07/09/2026, prueba en Finanzas › Movimientos):
+       halo gris neutro sin desplazamiento, rodea la fila por los cuatro lados (se probó azul del --ring y Alex lo descartó: "quedó muy feo");
+       antes fue gris con caída (30% → 50% de md/lg) hasta que Alex pidió "alrededor, no solo de un lado" */
+    --ds-shadow-row: 0 0 10px rgba(0, 0, 0, 0.08);
+    --ds-shadow-row-selected: 0 0 18px rgba(0, 0, 0, 0.12);
+    /* Foco tipo GLOW (Alex 02/09/2026): contorno tenue + halo difuso del azul --ring; sin línea dura */
+    --ds-shadow-focus:
+      0 0 0 1px color-mix(in oklab, var(--ring) 25%, transparent),
+      0 0 6px 2px color-mix(in oklab, var(--ring) 20%, transparent);
+    /* Hover de fila (D2, 16/09/2026): tinte de fondo, nunca halo */
+    --ds-row-hover: rgba(0, 0, 0, 0.03);
+    --ds-scrollbar-thumb: rgba(0, 0, 0, 0.16);
+    /* Hover suave: un paso sobre el reposo (0.16), Alex 07/09/2026 */
+    --ds-scrollbar-thumb-hover: rgba(0, 0, 0, 0.2);
+  }
+
+  .dark {
+    /* ── Shadcn compat tokens · Modo oscuro ────────────────────────── */
+    /* Escala oscurecida estilo Vercel (07/2026): base negro puro y niveles
+       apilados que conservan el matiz frío y los saltos de jerarquía. */
+    --background: #000000;
+    --card: #0a0a0c;
+    --popover: #111114;
+    --muted: #17181c;
+    --foreground: rgba(255, 255, 255, 0.92);
+    --card-foreground: rgba(255, 255, 255, 0.92);
+    --popover-foreground: rgba(255, 255, 255, 0.92);
+    --muted-foreground: rgba(255, 255, 255, 0.64);
+    --border: rgba(255, 255, 255, 0.1);
+    --input: rgba(255, 255, 255, 0.1);
+    --ring: var(--ds-info);
+    --primary: var(--foreground);
+    --primary-foreground: var(--background);
+    --accent: #17181c;
+    --accent-foreground: rgba(255, 255, 255, 0.92);
+    --secondary: #111114;
+    --secondary-foreground: rgba(255, 255, 255, 0.92);
+    --destructive: #ef4444;
+    --destructive-foreground: rgba(255, 255, 255, 0.92);
+    --chart-1: oklch(0.488 0.243 264.376);
+    --chart-2: oklch(0.696 0.17 162.48);
+    --chart-3: oklch(0.769 0.188 70.08);
+    --chart-4: oklch(0.627 0.265 303.9);
+    --chart-5: oklch(0.645 0.246 16.439);
+    --sidebar: #0a0a0c;
+    --sidebar-foreground: rgba(255, 255, 255, 0.92);
+    --sidebar-primary: var(--foreground);
+    --sidebar-primary-foreground: var(--background);
+    --sidebar-accent: #17181c;
+    --sidebar-accent-foreground: rgba(255, 255, 255, 0.92);
+    --sidebar-border: rgba(255, 255, 255, 0.1);
+    --sidebar-ring: var(--ring);
+
+    /* ── Sistema · vars intermedias · Modo oscuro ───────────────── */
+    --ds-bg-base: #000000;
+    --ds-bg-surface: #0a0a0c;
+    --ds-bg-elevated: #111114;
+    --ds-bg-overlay: #17181c;
+    --ds-border-subtle: rgba(255, 255, 255, 0.06);
+    --ds-border-default: rgba(255, 255, 255, 0.1);
+    --ds-border-strong: rgba(255, 255, 255, 0.16);
+    --ds-border-card: rgba(255, 255, 255, 0.08);
+    --ds-text-primary: rgba(255, 255, 255, 0.92);
+    --ds-text-secondary: rgba(255, 255, 255, 0.64);
+    --ds-text-tertiary: rgba(255, 255, 255, 0.4);
+    --ds-text-disabled: rgba(255, 255, 255, 0.24);
+    --ds-brand: #10b981;
+    --ds-brand-hover: #059669;
+    --ds-brand-subtle: rgba(16, 185, 129, 0.12);
+    --ds-brand-text: #34d399;
+    --ds-success: #10b981;
+    --ds-success-subtle: rgba(16, 185, 129, 0.1);
+    --ds-success-text: #34d399;
+    --ds-warning: #f59e0b;
+    --ds-warning-subtle: rgba(245, 158, 11, 0.1);
+    --ds-warning-text: #fbbf24;
+    --ds-danger: #ef4444;
+    --ds-danger-subtle: rgba(239, 68, 68, 0.1);
+    --ds-danger-text: #f87171;
+    --ds-info: #3b82f6;
+    --ds-info-subtle: rgba(59, 130, 246, 0.1);
+    --ds-info-text: #60a5fa;
+    --ds-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24);
+    --ds-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.32);
+    --ds-shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.4);
+    --ds-shadow-row: 0 0 10px rgba(0, 0, 0, 0.22);
+    --ds-shadow-row-selected: 0 0 18px rgba(0, 0, 0, 0.3);
+    --ds-shadow-focus:
+      0 0 0 1px color-mix(in oklab, var(--ring) 35%, transparent),
+      0 0 8px 2px color-mix(in oklab, var(--ring) 26%, transparent);
+    --ds-row-hover: rgba(255, 255, 255, 0.05);
+    --ds-scrollbar-thumb: rgba(255, 255, 255, 0.16);
+    --ds-scrollbar-thumb-hover: rgba(255, 255, 255, 0.2);
+  }
+
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family:
+      var(--font-geist-sans),
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      sans-serif;
+  }
+
+  /* Cursor pointer en TODO lo clickeable. El preflight de Tailwind v4 dejó
+     los <button> con cursor default; aquí se restaura, junto con los roles
+     interactivos de Radix que no rinden <button> (items de menú, opciones de
+     select/combobox). Lo deshabilitado queda fuera (además Radix pone
+     pointer-events-none en items disabled, que anula el cursor). */
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  [role='menuitem']:not([data-disabled]),
+  [role='menuitemcheckbox']:not([data-disabled]),
+  [role='menuitemradio']:not([data-disabled]),
+  [role='option']:not([data-disabled]),
+  summary,
+  label[for] {
+    cursor: pointer;
+  }
+
+  /* Scrollbar — fino y temático (cambia con dark/light via --ds-scrollbar-*).
+     Desktop: thumb de baja opacidad, track transparente, sin flechas.
+     Mobile (<768px): sin scrollbar visible, el scroll sigue funcionando. */
+  @media (min-width: 768px) {
+    /* Las propiedades estándar SOLO donde no existe ::-webkit-scrollbar
+       (Firefox). Desde Chrome 121, si scrollbar-width/scrollbar-color están
+       definidas el navegador IGNORA todas las reglas ::-webkit-scrollbar y
+       pinta su scrollbar nativo con su propio hover (mucho más oscuro): el
+       token --ds-scrollbar-thumb-hover no llegaba a aplicarse (Alex 07/09). */
+    @supports not selector(::-webkit-scrollbar) {
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: var(--ds-scrollbar-thumb) transparent;
+      }
+    }
+    *::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    *::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    *::-webkit-scrollbar-thumb {
+      background-color: var(--ds-scrollbar-thumb);
+      border-radius: 9999px;
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+    *::-webkit-scrollbar-thumb:hover {
+      background-color: var(--ds-scrollbar-thumb-hover);
+    }
+    *::-webkit-scrollbar-corner {
+      background: transparent;
+    }
+  }
+
+  @media (max-width: 767px) {
+    *:not(.scrollbar-soft) {
+      scrollbar-width: none;
+    }
+    *:not(.scrollbar-soft)::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  @supports not selector(::-webkit-scrollbar) {
+    .scrollbar-soft {
+      scrollbar-width: thin;
+      scrollbar-color: var(--ds-scrollbar-thumb) transparent;
+    }
+  }
+  .scrollbar-soft::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  .scrollbar-soft::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-soft::-webkit-scrollbar-thumb {
+    background-color: var(--ds-scrollbar-thumb);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  .scrollbar-soft::-webkit-scrollbar-thumb:hover {
+    background-color: var(--ds-scrollbar-thumb-hover);
+  }
+
+  /* Radix (react-remove-scroll) compensa la scrollbar al abrir un modal con un
+     `margin-right` en el body. Como ya reservamos el carril con
+     `scrollbar-gutter: stable`, esa compensación es DOBLE y corría la vista de
+     lado al abrir/cerrar modales. La neutralizamos (mayor especificidad +
+     !important para ganarle al estilo inline de Radix). */
+  html body[data-scroll-locked] {
+    margin-right: 0 !important;
+  }
+
+  /* Inputs numéricos — sin flechas de spinner. */
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+
+  /* View Transition — crossfade suave al cambiar de tema. */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 350ms;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Congela transition-colors de Tailwind durante la View Transition para que
+     botones/badges no se desincronicen del crossfade global.
+     Nota: :root:has(::view-transition) es CSS inválido, se usa data-attribute. */
+  [data-theme-transitioning] *,
+  [data-theme-transitioning] *::before,
+  [data-theme-transitioning] *::after {
+    transition: none !important;
+  }
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+
+  /* ── Shadcn compat — referencian CSS vars que cambian con .dark ──── */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* ── Soft Bento — referencian --ds-* que cambian con .dark ─────── */
+
+  /* Backgrounds */
+  --color-bg-base: var(--ds-bg-base);
+  --color-bg-surface: var(--ds-bg-surface);
+  --color-bg-elevated: var(--ds-bg-elevated);
+  --color-bg-overlay: var(--ds-bg-overlay);
+
+  /* Bordes */
+  --color-border-subtle: var(--ds-border-subtle);
+  --color-border-default: var(--ds-border-default);
+  --color-border-strong: var(--ds-border-strong);
+  --color-border-card: var(--ds-border-card);
+
+  /* Interacción */
+  --color-row-hover: var(--ds-row-hover);
+
+  /* Texto */
+  --color-text-primary: var(--ds-text-primary);
+  --color-text-secondary: var(--ds-text-secondary);
+  --color-text-tertiary: var(--ds-text-tertiary);
+  --color-text-disabled: var(--ds-text-disabled);
+
+  /* Marca */
+  --color-brand: var(--ds-brand);
+  --color-brand-hover: var(--ds-brand-hover);
+  --color-brand-subtle: var(--ds-brand-subtle);
+  --color-brand-text: var(--ds-brand-text);
+
+  /* Semánticos */
+  --color-success: var(--ds-success);
+  --color-success-subtle: var(--ds-success-subtle);
+  --color-success-text: var(--ds-success-text);
+  --color-warning: var(--ds-warning);
+  --color-warning-subtle: var(--ds-warning-subtle);
+  --color-warning-text: var(--ds-warning-text);
+  --color-danger: var(--ds-danger);
+  --color-danger-subtle: var(--ds-danger-subtle);
+  --color-danger-text: var(--ds-danger-text);
+  --color-info: var(--ds-info);
+  --color-info-subtle: var(--ds-info-subtle);
+  --color-info-text: var(--ds-info-text);
+
+  /* Radius — sobrescribe los shadcn calculados. Escala Geist/Vercel
+     (ajuste 30/07/2026): 6px domina la UI funcional (cards, tablas, controles),
+     igual que en vercel.com; 12px solo superficies grandes (modales). */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 6px;
+  --radius-xl: 12px;
+
+  /* Sombras */
+  --shadow-sm: var(--ds-shadow-sm);
+  --shadow-md: var(--ds-shadow-md);
+  --shadow-lg: var(--ds-shadow-lg);
+  --shadow-row: var(--ds-shadow-row);
+  --shadow-row-selected: var(--ds-shadow-row-selected);
+  --shadow-focus: var(--ds-shadow-focus);
+
+  /* Tipografía — escala Soft Bento */
+  --text-xs: 11px;
+  --text-xs--line-height: 1.4;
+  --text-sm: 13px;
+  --text-sm--line-height: 1.5;
+  --text-base: 14px;
+  --text-base--line-height: 1.5;
+  --text-lg: 16px;
+  --text-lg--line-height: 1.5;
+  --text-xl: 18px;
+  --text-xl--line-height: 1.4;
+  --text-2xl: 22px;
+  --text-2xl--line-height: 1.3;
+  --text-3xl: 28px;
+  --text-3xl--line-height: 1.2;
+  --text-4xl: 36px;
+  --text-4xl--line-height: 1.1;
+
+  /* Mono — Geist Mono oficial (paquete `geist`); los fallbacks solo aplican
+     si la variable no cargó. */
+  --font-mono:
+    var(--font-geist-mono), ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Monaco, Consolas,
+    monospace;
+}
+
+/* ── Éxito de cobro (RegisterChargeModal) ──────────────────────────────────
+   Animación one-shot de estado (no transición de hover): círculo que escala
+   con fade y palomita que se dibuja vía stroke-dashoffset. Sin bounce. */
+@keyframes charge-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes charge-draw {
+  from {
+    stroke-dashoffset: 24;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes charge-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-charge-pop {
+  animation: charge-pop 200ms ease-out both;
+}
+
+.animate-charge-draw {
+  stroke-dasharray: 24;
+  animation: charge-draw 300ms ease-out 150ms both;
+}
+
+.animate-charge-fade-up {
+  animation: charge-fade-up 250ms ease-out 250ms both;
+}
